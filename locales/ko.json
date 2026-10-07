@@ -1,0 +1,22 @@
+{
+  "pageTitle": "ATHENAEUM :: 세월의 흔적이 머무는 서재",
+  "headerSubtitle": "Archive of Solitary Thought",
+  "heroTitle": "밤의 고요 속, 문장들이 깃드는 곳",
+  "heroDesc": "오랜 책들 사이의 서재에서 당신만의 책을 기록하세요.<br>스쳐 지나간 문장들은 누군가의 밤을 밝히는 한 자루 촛불이 됩니다.",
+  "btnRecord": "책 기록 남기기",
+  "btnExplore": "공유된 서재 거닐기",
+  "formTitle": "새로운 서적 기록",
+  "searchPlaceholder": "도서명 또는 저자를 입력하세요...",
+  "btnSearch": "검색",
+  "noCover": "표지 없음",
+  "inputTitle": "책 제목",
+  "inputAuthor": "저자",
+  "inputPublisher": "출판사",
+  "labelRating": "평점",
+  "labelVisibility": "공개 설정",
+  "optionPublic": "공개 서재",
+  "optionPrivate": "비밀 서재",
+  "inputMusic": "배경 음악 URL (YouTube / Spotify)",
+  "inputReview": "이 책이 당신에게 남긴 문장과 사유를 기록하세요...",
+  "btnSave": "서재에 저장하기"
+}

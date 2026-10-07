@@ -1,0 +1,5584 @@
+:root {
+  --bg-dark-wood: #0d0d0d;
+  --bg-deep-cabinet: #141414;
+  --parchment-bg: #1a1a1a;
+  --parchment-border: #424242;
+  --gold-accent: #c4c4c4;
+  --gold-muted: #6e6e6e;
+  --text-parchment: #d4d4d4;
+  --text-muted: #8a8a8a;
+  --crimson-ink: #2a2a2a;
+  
+  --font-title: 'Cormorant Garamond', 'Noto Sans KR', sans-serif;
+  --font-body: 'Noto Sans KR', sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-dark-wood);
+  background-image: 
+    radial-gradient(circle at 50% 30%, #1f1f1f 0%, #0d0d0d 75%),
+    linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.9));
+  color: var(--text-parchment);
+  font-family: var(--font-body);
+  font-weight: 300;
+  min-height: 100vh;
+  position: relative;
+}
+
+.hidden { display: none !important; }
+
+.vignette-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  box-shadow: inset 0 0 130px rgba(0, 0, 0, 0.95);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.header {
+  position: relative;
+  z-index: 2;
+  padding: 2.5rem 2rem 1.5rem;
+  border-bottom: 1px solid rgba(196, 196, 196, 0.15);
+  background: linear-gradient(to bottom, rgba(13, 13, 13, 0.95), transparent);
+}
+
+.header-container {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.2rem;
+  letter-spacing: 0.35rem;
+  color: var(--gold-accent);
+  margin: 0;
+  font-weight: 600;
+}
+
+.subtitle {
+  margin: 0.2rem 0 0 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.15rem;
+  color: var(--text-muted);
+}
+
+/* 네비게이션 메뉴 */
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  padding: 0;
+}
+
+.nav-item:hover {
+  color: var(--gold-accent);
+}
+
+.nav-divider {
+  color: var(--parchment-border);
+  font-size: 0.8rem;
+  opacity: 0.5;
+}
+
+.lang-selector {
+  font-family: 'Cormorant Garamond', var(--font-body);
+  font-size: 0.95rem;
+}
+
+.lang-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.lang-btn.active {
+  color: var(--gold-accent);
+}
+
+.divider {
+  color: var(--gold-muted);
+  margin: 0 8px;
+  font-size: 0.7rem;
+}
+
+.main-wrapper {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 3rem auto;
+  padding: 0 1.5rem;
+}
+
+/* 메인 홈 깔끔한 컨테이너 */
+.hero-clean-container {
+  padding: 2rem 0;
+}
+
+.parchment-card {
+  background: var(--parchment-bg);
+  border: 1px solid var(--parchment-border);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
+  padding: 12px;
+  border-radius: 2px;
+}
+
+.card-border-inner {
+  border: 1px solid rgba(196, 196, 196, 0.2);
+  padding: 2.5rem 2rem;
+  position: relative;
+}
+
+.hero-center {
+  text-align: center;
+}
+
+.ornament {
+  position: absolute;
+  color: var(--gold-muted);
+  font-size: 1rem;
+}
+.top-left { top: 8px; left: 12px; }
+.top-right { top: 8px; right: 12px; }
+.bottom-left { bottom: 8px; left: 12px; }
+.bottom-right { bottom: 8px; right: 12px; }
+
+.hero-title, .form-title {
+  font-size: 1.5rem;
+  color: var(--gold-accent);
+  margin-top: 0;
+  font-weight: 400;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: var(--gold-accent);
+}
+
+.separator {
+  text-align: center;
+  color: var(--gold-muted);
+  margin: 1rem 0 2rem;
+  font-size: 0.85rem;
+  opacity: 0.6;
+}
+
+.hero-desc {
+  color: var(--text-parchment);
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 2.5rem;
+  word-break: keep-all;
+}
+
+.action-group {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+/* 검색창 영역 */
+.search-section {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.search-box {
+  display: flex;
+  gap: 10px;
+}
+
+input[type="text"], input[type="url"], select, textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--bg-deep-cabinet);
+  border: 1px solid var(--parchment-border);
+  color: var(--text-parchment);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--gold-accent);
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #181818;
+  border: 1px solid var(--gold-accent);
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 999;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.95);
+  margin-top: 4px;
+}
+
+.search-item {
+  padding: 0.9rem 1.2rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: background 0.2s;
+}
+
+.search-item:hover {
+  background: #2a2a2a;
+  color: #ffffff;
+}
+
+.search-item-thumb {
+  width: 36px;
+  height: 50px;
+  object-fit: cover;
+  background: #333;
+  flex-shrink: 0;
+}
+
+.search-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  overflow: hidden;
+}
+
+.search-item-title {
+  font-size: 0.95rem;
+  color: var(--text-parchment);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-item-author {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* 도서 입력 폼 */
+.book-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.form-row {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.cover-preview-box {
+  width: 110px;
+  height: 150px;
+  background: var(--bg-deep-cabinet);
+  border: 1px dashed var(--parchment-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cover-preview-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.no-cover-text {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.form-inputs {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.options-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+
+/* 클릭형 별점 스타일 */
+.star-rating-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 42px;
+  background: var(--bg-deep-cabinet);
+  border: 1px solid var(--parchment-border);
+  padding: 0 1rem;
+}
+
+.star-rating {
+  display: flex;
+  font-size: 1.3rem;
+  color: var(--parchment-border);
+  cursor: pointer;
+  user-select: none;
+}
+
+.star-rating .star {
+  transition: color 0.15s ease;
+}
+
+.star-rating .star.full {
+  color: #d4af37;
+}
+
+.star-rating .star.half {
+  background: linear-gradient(90deg, #d4af37 50%, var(--parchment-border) 50%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.rating-value-text {
+  font-size: 0.9rem;
+  color: var(--gold-accent);
+}
+
+.archival-btn {
+  background: #222222;
+  border: 1px solid var(--gold-muted);
+  color: var(--text-parchment);
+  padding: 0.75rem 1.5rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.archival-btn:hover {
+  border-color: var(--gold-accent);
+  color: #ffffff;
+  background: #2d2d2d;
+}
+
+.archival-btn.secondary {
+  background: transparent;
+  border-color: rgba(110, 110, 110, 0.4);
+  color: var(--text-muted);
+}
+
+.submit-btn {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+/* 모달 */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(5, 5, 5, 0.92);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-card {
+  background: var(--bg-deep-cabinet);
+  border: 1px solid var(--parchment-border);
+  padding: 2.5rem 2rem;
+  max-width: 440px;
+  width: 85%;
+  text-align: center;
+}
+
+.seal-icon { font-size: 2.2rem; margin-bottom: 1rem; }
+.modal-title { color: var(--gold-accent); font-size: 1.25rem; font-weight: 400; margin-bottom: 1rem; }
+.modal-message { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2rem; }
+.modal-actions { display: flex; gap: 10px; justify-content: center; }
+
+/* =========================================
+   [NEW] 입체 고서재 책장 (Bookshelf) 스타일
+   ========================================= */
+
+/* 책장 전체 외곽 (황동 레일 & 깊이감 있는 입체 목재 프레임) */
+.bookshelf-container {
+  background: radial-gradient(circle at 50% 50%, #1a1613 0%, #0d0a08 100%);
+  border: 12px solid #231c17;
+  outline: 1px solid rgba(212, 175, 55, 0.2);
+  outline-offset: -12px;
+  border-radius: 3px;
+  box-shadow: 
+    inset 0 0 60px rgba(0, 0, 0, 0.95),
+    0 20px 45px rgba(0, 0, 0, 0.9);
+  padding: 40px 20px 15px;
+  margin: 2.5rem 0;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* 상단 황동(Brass) 이동 사다리 레일 디테일 */
+.bookshelf-container::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: -8px;
+  right: -8px;
+  height: 8px;
+  background: linear-gradient(to bottom, #e5c158 0%, #b89332 50%, #5c4715 100%);
+  box-shadow: 
+    0 4px 10px rgba(0, 0, 0, 0.95),
+    0 0 12px rgba(229, 193, 88, 0.3);
+  z-index: 10;
+  border-radius: 2px;
+}
+
+/* 선반 (각 층) */
+.shelf-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  height: 200px;
+  padding: 0 15px;
+  margin-bottom: 35px;
+  position: relative;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 35%, rgba(0,0,0,0.85) 100%);
+  border-bottom: 18px solid #2d241e;
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.9);
+}
+
+/* 선반 하단 황동 앤틱 림 트림 라인 */
+.shelf-row::after {
+  content: '';
+  position: absolute;
+  bottom: -18px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(to right, rgba(184,147,50,0.1), rgba(229,193,88,0.6) 50%, rgba(184,147,50,0.1));
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* 양장본 서적 디자인 */
+.shelf-book {
+  width: 34px;
+  height: 150px;
+  background: linear-gradient(to right, #2b231d 0%, #1f1813 80%, #15100c 100%);
+  border-left: 2px solid rgba(255, 255, 255, 0.2);
+  border-right: 3px solid rgba(0, 0, 0, 0.9);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 2px 4px 4px 2px;
+  box-shadow: 5px 0 12px rgba(0, 0, 0, 0.8);
+  transition: transform 0.25s ease, filter 0.25s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+/* 도서 등표지 금박 띠 라인 디테일 */
+.shelf-book::before {
+  content: '';
+  position: absolute;
+  top: 15px;
+  bottom: 15px;
+  left: 4px;
+  right: 4px;
+  border-top: 1px solid rgba(212, 175, 55, 0.4);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.4);
+  pointer-events: none;
+}
+
+.shelf-book:hover {
+  transform: translateY(-10px) scale(1.03);
+  filter: brightness(1.2);
+}
+/* =========================================================
+   ATHENAEUM :: 도서 검색 결과 다크 테마
+   ========================================================= */
+
+/* 검색 결과 전체 박스 */
+.search-results {
+  background: #171513;
+  border: 1px solid #3a322b;
+  border-top: none;
+  max-height: 280px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* 검색 결과 한 권 */
+.search-results .search-item {
+  width: 100%;
+  min-height: 90px;
+
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  padding: 0.8rem 1rem;
+  margin: 0;
+
+  box-sizing: border-box;
+
+  /* ⭐ 브라우저 기본 흰색 버튼 제거 */
+  appearance: none;
+  -webkit-appearance: none;
+
+  border: none;
+  border-bottom: 1px solid #332c26;
+  border-radius: 0;
+
+  background: #171513;
+  color: #e8e1d7;
+
+  font-family: inherit;
+  font-size: 0.9rem;
+  text-align: left;
+
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* 마지막 결과의 밑줄 제거 */
+.search-results .search-item:last-child {
+  border-bottom: none;
+}
+
+/* 마우스를 올렸을 때 */
+.search-results .search-item:hover {
+  background: #25201b;
+  border-color: #5a4935;
+}
+
+/* 클릭하는 순간 */
+.search-results .search-item:active {
+  background: #30271f;
+}
+
+/* 책 표지 */
+.search-item-thumb {
+  flex: 0 0 38px;
+  width: 38px;
+  height: 55px;
+
+  object-fit: cover;
+
+  background: #24201c;
+  border: 1px solid #4a3d30;
+
+  box-sizing: border-box;
+}
+
+/* 표지가 없는 경우 */
+.search-item-no-cover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #8c8275;
+  font-size: 0.65rem;
+  text-align: center;
+}
+
+/* 책 정보 영역 */
+.search-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 책 제목 */
+.search-item-title {
+  color: #e8e1d7;
+  font-family: "Cormorant Garamond", "Noto Sans KR", serif;
+  font-size: 1rem;
+  line-height: 1.35;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 저자 · 출판사 */
+.search-item-sub {
+  margin-top: 0.25rem;
+
+  color: #b5aa9b;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+/* Google Books / Kakao 표시 */
+.search-item-source {
+  margin-top: 0.25rem;
+
+  color: #8c8275;
+  font-size: 0.72rem;
+  line-height: 1.3;
+}
+
+/* 검색 중 */
+.search-results .search-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 70px;
+
+  color: #c5a059;
+  cursor: default;
+}
+
+/* 검색 결과 없음 */
+.search-results .search-no-result {
+  display: block;
+
+  min-height: 70px;
+
+  color: #c5a059;
+  text-align: center;
+}
+
+.search-results .search-no-result span {
+  display: inline-block;
+  margin-top: 0.3rem;
+
+  color: #8c8275;
+  font-size: 0.78rem;
+}
+
+/* 검색 결과 스크롤바 */
+.search-results::-webkit-scrollbar {
+  width: 8px;
+}
+
+.search-results::-webkit-scrollbar-track {
+  background: #121110;
+}
+
+.search-results::-webkit-scrollbar-thumb {
+  background: #4a3d30;
+  border-radius: 4px;
+}
+
+.search-results::-webkit-scrollbar-thumb:hover {
+  background: #6a563c;
+}
+
+/* =========================================================
+   ATHENAEUM :: 실제 책장 연결
+   ========================================================= */
+
+/* -----------------------------------------
+   책장 보기 방식 선택 버튼
+   ----------------------------------------- */
+
+.bookshelf-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin: 18px 0 24px;
+}
+
+.bookshelf-view-btn {
+  appearance: none;
+  border: 1px solid rgba(197, 160, 89, 0.45);
+  background: rgba(20, 16, 12, 0.85);
+  color: #8c8275;
+  padding: 10px 22px;
+  font-family: inherit;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition:
+    color 0.25s ease,
+    border-color 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.bookshelf-view-btn:hover {
+  color: #d8bd78;
+  border-color: rgba(197, 160, 89, 0.75);
+  background: rgba(45, 34, 24, 0.9);
+}
+
+.bookshelf-view-btn.active {
+  color: #e0c477;
+  border-color: #c5a059;
+  background: rgba(74, 54, 32, 0.5);
+  box-shadow:
+    inset 0 0 12px rgba(197, 160, 89, 0.08),
+    0 0 10px rgba(197, 160, 89, 0.08);
+}
+
+.bookshelf-view-divider {
+  color: rgba(197, 160, 89, 0.55);
+  font-size: 0.65rem;
+}
+
+
+/* -----------------------------------------
+   실제 책장
+   ----------------------------------------- */
+
+.bookshelf-container {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+
+  background:
+    radial-gradient(
+      circle at 50% 45%,
+      #1a1613 0%,
+      #0d0a08 72%,
+      #090705 100%
+    );
+
+  border: 12px solid #231c17;
+  outline: 1px solid rgba(212, 175, 55, 0.2);
+  outline-offset: -12px;
+
+  border-radius: 3px;
+
+  box-shadow:
+    inset 0 0 60px rgba(0, 0, 0, 0.95),
+    0 20px 45px rgba(0, 0, 0, 0.9);
+
+  padding: 40px 20px 18px;
+  margin: 2rem 0;
+
+  overflow: hidden;
+}
+
+
+/* 위쪽 황동 레일 */
+
+.bookshelf-container::before {
+  content: '';
+
+  position: absolute;
+  top: 18px;
+  left: -8px;
+  right: -8px;
+
+  height: 8px;
+
+  background:
+    linear-gradient(
+      to bottom,
+      #e5c158 0%,
+      #b89332 50%,
+      #5c4715 100%
+    );
+
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.95),
+    0 0 12px rgba(229, 193, 88, 0.3);
+
+  z-index: 20;
+  border-radius: 2px;
+}
+
+
+/* -----------------------------------------
+   JS가 만들어내는 실제 선반
+   ----------------------------------------- */
+
+.bookshelf-container .shelf-library {
+  width: 100%;
+  display: block;
+}
+
+.bookshelf-container .shelf-row {
+  width: 100%;
+  min-height: 205px;
+
+  display: flex;
+  align-items: flex-end;
+
+  gap: 14px;
+
+  padding:
+    0 20px 0;
+
+  margin: 0 0 34px;
+
+  box-sizing: border-box;
+
+  position: relative;
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.72) 0%,
+      rgba(0, 0, 0, 0.08) 45%,
+      rgba(0, 0, 0, 0.85) 100%
+    );
+
+  border-bottom: 18px solid #2d241e;
+
+  box-shadow:
+    0 12px 20px rgba(0, 0, 0, 0.9);
+}
+
+
+/* 선반의 황동 장식선 */
+
+.bookshelf-container .shelf-row::after {
+  content: '';
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: -18px;
+
+  height: 2px;
+
+  background:
+    linear-gradient(
+      to right,
+      rgba(184, 147, 50, 0.1),
+      rgba(229, 193, 88, 0.6) 50%,
+      rgba(184, 147, 50, 0.1)
+    );
+
+  box-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+
+/* -----------------------------------------
+   표지 보기
+   ----------------------------------------- */
+
+.shelf-library.cover-mode .shelf-row {
+  min-height: 205px;
+}
+
+.cover-book {
+  position: relative;
+
+  flex: 0 0 auto;
+
+  width: 110px;
+  height: 158px;
+
+  cursor: pointer;
+
+  transform-origin: bottom center;
+
+  transition:
+    transform 0.25s ease,
+    filter 0.25s ease;
+
+  z-index: 2;
+}
+
+.cover-book:hover {
+  transform:
+    translateY(-10px)
+    rotateY(-4deg);
+
+  filter:
+    brightness(1.08);
+
+  z-index: 10;
+}
+
+.cover-book-inner {
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  background: #261e17;
+
+  border-radius:
+    2px 4px 4px 2px;
+
+  border-left:
+    4px solid #573e2b;
+
+  box-shadow:
+    4px 6px 12px rgba(0, 0, 0, 0.65);
+}
+
+.cover-book-inner img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.cover-book-placeholder {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  padding: 12px;
+
+  box-sizing: border-box;
+
+  text-align: center;
+
+  background:
+    linear-gradient(
+      135deg,
+      #30251c,
+      #17120e
+    );
+
+  color: #c5a059;
+}
+
+.cover-book-title {
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.cover-book-author {
+  margin-top: 8px;
+
+  font-size: 0.63rem;
+
+  color: #8c8275;
+}
+
+
+/* -----------------------------------------
+   책 삭제 버튼
+   ----------------------------------------- */
+
+.book-delete-btn {
+  position: absolute;
+
+  top: -7px;
+  right: -7px;
+
+  width: 21px;
+  height: 21px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border:
+    1px solid rgba(197, 160, 89, 0.7);
+
+  border-radius: 50%;
+
+  background: #14110e;
+  color: #b66d5d;
+
+  font-size: 0.68rem;
+
+  cursor: pointer;
+
+  z-index: 30;
+
+  opacity: 0;
+
+  transition:
+    opacity 0.2s ease,
+    background 0.2s ease;
+}
+
+.cover-book:hover .book-delete-btn,
+.spine-book:hover .book-delete-btn {
+  opacity: 1;
+}
+
+.book-delete-btn:hover {
+  background: #2b1b16;
+  color: #d88978;
+}
+
+
+/* -----------------------------------------
+   책등 보기
+   ----------------------------------------- */
+
+.shelf-library.spine-mode .shelf-row {
+  min-height: 205px;
+}
+
+.spine-book {
+  position: relative;
+
+  flex:
+    0 0 var(--book-width, 34px);
+
+  width:
+    var(--book-width, 34px);
+
+  height:
+    var(--book-height, 151px);
+
+  box-sizing: border-box;
+
+  cursor: pointer;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  padding: 10px 5px;
+
+  background:
+  linear-gradient(
+    to right,
+    color-mix(
+      in srgb,
+      var(--spine-color, #4a3425) 55%,
+      #080604
+    ),
+    var(--spine-color, #4a3425),
+    color-mix(
+      in srgb,
+      var(--spine-color, #4a3425) 45%,
+      #000
+    )
+  );
+
+  border-left:
+    2px solid rgba(255, 255, 255, 0.16);
+
+  border-right:
+    3px solid rgba(0, 0, 0, 0.75);
+
+  border-top:
+    1px solid rgba(255, 255, 255, 0.1);
+
+  border-radius:
+    2px 4px 4px 2px;
+
+  box-shadow:
+    5px 0 12px rgba(0, 0, 0, 0.75);
+
+  transition:
+    transform 0.25s ease,
+    filter 0.25s ease;
+
+  z-index: 2;
+}
+
+.spine-book:hover {
+  transform:
+    translateY(-9px);
+
+  filter:
+    brightness(1.1);
+
+  z-index: 10;
+}
+
+.spine-book::before,
+.spine-book::after {
+  content: '';
+
+  position: absolute;
+
+  left: 4px;
+  right: 4px;
+
+  height: 1px;
+
+  background:
+    rgba(229, 193, 88, 0.45);
+}
+
+.spine-book::before {
+  top: 15px;
+}
+
+.spine-book::after {
+  bottom: 15px;
+}
+
+.spine-book-title {
+  width: 100%;
+  height: 100%;
+
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+
+  text-align: center;
+
+  font-size: 0.68rem;
+  font-weight: 500;
+  line-height: 1.2;
+
+  color: var(
+    --spine-text-color,
+    #e1d2ae
+  );
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  text-shadow:
+    0 0 2px rgba(0, 0, 0, 0.25);
+}
+
+/* -----------------------------------------
+   책장 빈 상태
+   ----------------------------------------- */
+
+.shelf-empty-note {
+  width: 100%;
+
+  padding: 70px 20px;
+
+  box-sizing: border-box;
+
+  text-align: center;
+
+  color: #8c8275;
+
+  font-size: 0.88rem;
+
+  font-style: italic;
+}
+
+/* -----------------------------------------
+   모바일
+   ----------------------------------------- */
+
+@media (max-width: 700px) {
+
+  .bookshelf-container {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .bookshelf-container .shelf-row {
+    gap: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .cover-book {
+    width: 82px;
+    height: 122px;
+  }
+
+  .bookshelf-view-btn {
+    padding: 8px 14px;
+    font-size: 0.75rem;
+  }
+}
+
+/* =========================================================
+   ATHENAEUM :: VINTAGE DARK ACADEMIA BOOKSHELF
+   실제 고서관 책장 느낌 + 황동 조명 + 밀착된 책등
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   1. 책장 전체
+   --------------------------------------------------------- */
+
+.bookshelf-container {
+  position: relative;
+
+  background:
+    linear-gradient(
+      90deg,
+      #100b08 0%,
+      #24170f 3%,
+      #120c09 8%,
+      #090605 50%,
+      #120c09 92%,
+      #24170f 97%,
+      #100b08 100%
+    );
+
+  border: 14px solid #21140d;
+
+  outline:
+    1px solid
+    rgba(197, 160, 89, 0.28);
+
+  outline-offset: -14px;
+
+  box-shadow:
+    inset 0 0 45px rgba(0, 0, 0, 0.95),
+    inset 18px 0 25px rgba(0, 0, 0, 0.55),
+    inset -18px 0 25px rgba(0, 0, 0, 0.55),
+    0 25px 50px rgba(0, 0, 0, 0.95);
+
+  padding:
+    58px 20px 30px;
+
+  overflow: hidden;
+}
+
+
+/* ---------------------------------------------------------
+   2. 책장 상단 고전적인 목재 몰딩
+   --------------------------------------------------------- */
+
+.bookshelf-container::before {
+  content: '';
+
+  position: absolute;
+
+  top: 18px;
+  left: -2px;
+  right: -2px;
+
+  height: 13px;
+
+  background:
+    linear-gradient(
+      to bottom,
+      #5b3b20 0%,
+      #c49a4d 18%,
+      #8a6129 42%,
+      #3a2414 65%,
+      #140c08 100%
+    );
+
+  border-top:
+    1px solid
+    rgba(235, 204, 133, 0.55);
+
+  border-bottom:
+    1px solid
+    rgba(0, 0, 0, 0.9);
+
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.9),
+    0 0 10px rgba(197, 160, 89, 0.18);
+
+  z-index: 20;
+}
+
+
+/* ---------------------------------------------------------
+   3. 책장 내부
+   --------------------------------------------------------- */
+
+.bookshelf-container .shelf-library {
+  width: 100%;
+  display: block;
+}
+
+
+/* ---------------------------------------------------------
+   4. 각각의 선반
+   --------------------------------------------------------- */
+
+.bookshelf-container .shelf-row {
+  width: 100%;
+
+  min-height: 205px;
+
+  display: flex;
+
+  align-items: flex-end;
+
+  /*
+   * ★ 핵심
+   * 실제 책꽂이처럼 책등 사이에 빈틈을 없앤다.
+   */
+  gap: 0;
+
+  padding:
+    0 20px;
+
+  margin:
+    0 0 38px;
+
+  box-sizing: border-box;
+
+  position: relative;
+
+  /*
+   * 깊은 원목 내부 + 위쪽에서 내려오는
+   * 따뜻한 황동색 조명
+   */
+  background:
+    radial-gradient(
+      ellipse at 50% 4%,
+      rgba(177, 117, 45, 0.28) 0%,
+      rgba(112, 68, 27, 0.13) 20%,
+      rgba(0, 0, 0, 0) 48%
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(8, 5, 3, 0.18) 0%,
+      rgba(0, 0, 0, 0.32) 55%,
+      rgba(0, 0, 0, 0.92) 100%
+    );
+
+  border-bottom:
+    19px solid #302015;
+
+  box-shadow:
+    inset 0 -28px 28px rgba(0, 0, 0, 0.75),
+    0 14px 20px rgba(0, 0, 0, 0.8);
+}
+
+
+/* ---------------------------------------------------------
+   5. ★ 각 선반 위의 따뜻한 책장 조명
+   --------------------------------------------------------- */
+
+.bookshelf-container .shelf-row::before {
+  content: '';
+
+  position: absolute;
+
+  top: 8px;
+  left: 7%;
+  right: 7%;
+
+  height: 4px;
+
+  background:
+    linear-gradient(
+      to right,
+      rgba(183, 126, 51, 0),
+      rgba(235, 191, 101, 0.95) 15%,
+      rgba(255, 215, 137, 1) 50%,
+      rgba(235, 191, 101, 0.95) 85%,
+      rgba(183, 126, 51, 0)
+    );
+
+  border-radius: 50%;
+
+  box-shadow:
+    0 0 5px rgba(255, 210, 125, 0.9),
+    0 0 14px rgba(215, 148, 55, 0.7),
+    0 0 30px rgba(174, 105, 34, 0.35);
+
+  opacity: 0.88;
+
+  z-index: 1;
+
+  pointer-events: none;
+}
+
+
+/* ---------------------------------------------------------
+   6. 선반 앞쪽 원목 + 황동 테두리
+   --------------------------------------------------------- */
+
+.bookshelf-container .shelf-row::after {
+  content: '';
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  bottom: -19px;
+
+  height: 3px;
+
+  background:
+    linear-gradient(
+      to right,
+      rgba(117, 78, 32, 0.25),
+      rgba(229, 193, 88, 0.75) 20%,
+      rgba(246, 212, 132, 0.95) 50%,
+      rgba(229, 193, 88, 0.75) 80%,
+      rgba(117, 78, 32, 0.25)
+    );
+
+  box-shadow:
+    0 1px 5px rgba(0, 0, 0, 0.9),
+    0 0 8px rgba(229, 193, 88, 0.22);
+
+  z-index: 5;
+}
+
+
+/* ---------------------------------------------------------
+   7. 책등 모드에서 책 사이 완전 밀착
+   --------------------------------------------------------- */
+
+.shelf-library.spine-mode .shelf-row {
+  gap: 0 !important;
+
+  /*
+   * 실제 책장에 책을 꽂아놓은 것처럼
+   * 책이 선반 안쪽에 바짝 붙도록 한다.
+   */
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+
+/* ---------------------------------------------------------
+   8. 고서 느낌의 책등
+   --------------------------------------------------------- */
+
+.shelf-library.spine-mode .spine-book {
+  position: relative;
+
+  /*
+   * JS가 계산한 책 크기는 그대로 사용
+   */
+  flex:
+    0 0 var(--book-width, 34px);
+
+  width:
+    var(--book-width, 34px);
+
+  height:
+    var(--book-height, 151px);
+
+  box-sizing: border-box;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  /*
+   * 실제 오래된 가죽 양장본 같은 질감
+   */
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.55) 0%,
+      rgba(255, 255, 255, 0.10) 7%,
+      rgba(255, 255, 255, 0.025) 25%,
+      rgba(0, 0, 0, 0.08) 55%,
+      rgba(0, 0, 0, 0.55) 100%
+    ),
+    var(--spine-color, #3b2920);
+
+  border-left:
+    1px solid
+    rgba(255, 226, 162, 0.20);
+
+  border-right:
+    2px solid
+    rgba(0, 0, 0, 0.65);
+
+  border-top:
+    1px solid
+    rgba(255, 225, 157, 0.12);
+
+  border-bottom:
+    1px solid
+    rgba(0, 0, 0, 0.7);
+
+  border-radius:
+    2px 3px 3px 2px;
+
+  box-shadow:
+    inset 2px 0 3px rgba(255, 255, 255, 0.06),
+    inset -3px 0 5px rgba(0, 0, 0, 0.35),
+    3px 0 5px rgba(0, 0, 0, 0.45);
+
+  cursor: pointer;
+
+  transition:
+    transform 0.25s ease,
+    filter 0.25s ease;
+
+  z-index: 2;
+}
+
+
+/* ---------------------------------------------------------
+   9. 책등의 고급스러운 금박 띠
+   --------------------------------------------------------- */
+
+.shelf-library.spine-mode .spine-book::before {
+  content: '';
+
+  position: absolute;
+
+  left: 3px;
+  right: 3px;
+
+  top: 13px;
+  bottom: 13px;
+
+  border-top:
+    1px solid
+    rgba(225, 188, 92, 0.65);
+
+  border-bottom:
+    1px solid
+    rgba(225, 188, 92, 0.65);
+
+  box-shadow:
+    0 1px 0 rgba(255, 227, 154, 0.12);
+
+  pointer-events: none;
+
+  z-index: 1;
+}
+
+
+/* ---------------------------------------------------------
+   10. 책등 중앙 장식
+   --------------------------------------------------------- */
+
+.shelf-library.spine-mode .spine-book::after {
+  content: '✦';
+
+  position: absolute;
+
+  left: 50%;
+
+  top: 50%;
+
+  transform:
+    translate(-50%, -50%);
+
+  font-family:
+    'Cormorant Garamond',
+    serif;
+
+  font-size: 0.52rem;
+
+  color:
+    rgba(224, 184, 83, 0.78);
+
+  text-shadow:
+    0 0 3px rgba(218, 170, 67, 0.35);
+
+  pointer-events: none;
+
+  z-index: 1;
+}
+
+
+/* ---------------------------------------------------------
+   11. 책 제목
+   --------------------------------------------------------- */
+
+.shelf-library.spine-mode .spine-book-title {
+  position: relative;
+
+  z-index: 3;
+
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  writing-mode: vertical-rl;
+
+  text-orientation: mixed;
+
+  text-align: center;
+
+  font-family:
+    'Cormorant Garamond',
+    'Noto Sans KR',
+    serif;
+
+  font-size: 0.68rem;
+
+  font-weight: 500;
+
+  line-height: 1.2;
+
+  letter-spacing: 0.02em;
+
+  color:
+    var(
+      --spine-text-color,
+      #e1d2ae
+    );
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.65);
+
+  padding:
+    26px 4px;
+
+  box-sizing: border-box;
+}
+
+
+/* ---------------------------------------------------------
+   12. 책 사이에 아주 미세한 그림자
+   --------------------------------------------------------- */
+
+.shelf-library.spine-mode .spine-book + .spine-book {
+  box-shadow:
+    -1px 0 0 rgba(0, 0, 0, 0.7),
+    2px 0 5px rgba(0, 0, 0, 0.38),
+    inset 2px 0 3px rgba(255, 255, 255, 0.04);
+}
+
+
+/* ---------------------------------------------------------
+   13. 책을 꺼내는 듯한 hover
+   --------------------------------------------------------- */
+
+.shelf-library.spine-mode .spine-book:hover {
+  transform:
+    translateY(-8px);
+
+  filter:
+    brightness(1.13);
+
+  z-index: 20;
+
+  box-shadow:
+    0 8px 15px rgba(0, 0, 0, 0.7),
+    0 0 8px rgba(214, 165, 71, 0.16);
+}
+
+
+/* ---------------------------------------------------------
+   14. 책장 양쪽 세로 원목 기둥
+   --------------------------------------------------------- */
+
+.bookshelf-container {
+  background-image:
+    linear-gradient(
+      to right,
+      rgba(71, 43, 24, 0.75) 0px,
+      rgba(31, 18, 10, 0.3) 12px,
+      transparent 28px,
+      transparent calc(100% - 28px),
+      rgba(31, 18, 10, 0.3) calc(100% - 12px),
+      rgba(71, 43, 24, 0.75) 100%
+    ),
+    radial-gradient(
+      ellipse at 50% 15%,
+      rgba(129, 77, 28, 0.12),
+      transparent 55%
+    );
+}
+
+
+/* ---------------------------------------------------------
+   15. 모바일
+   --------------------------------------------------------- */
+
+@media (max-width: 700px) {
+
+  .bookshelf-container {
+    padding:
+      52px 10px 25px;
+  }
+
+  .bookshelf-container .shelf-row {
+    padding-left: 8px;
+    padding-right: 8px;
+
+    margin-bottom: 32px;
+  }
+
+  .shelf-library.spine-mode .shelf-row {
+    gap: 0 !important;
+
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .shelf-library.spine-mode .spine-book-title {
+    font-size: 0.62rem;
+  }
+}
+
+/* =========================================================
+   ATHENAEUM :: ANTIQUE LIBRARY FINAL BOOKSHELF
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   책장 전체 — 짙은 월넛 원목
+   --------------------------------------------------------- */
+
+.bookshelf-container {
+  background:
+    linear-gradient(
+      90deg,
+      #120a06 0%,
+      #2a180d 2%,
+      #160c07 7%,
+      #0b0705 50%,
+      #160c07 93%,
+      #2a180d 98%,
+      #120a06 100%
+    );
+
+  border:
+    14px solid #24140b;
+
+  outline:
+    1px solid
+    rgba(197, 160, 89, 0.38);
+
+  outline-offset:
+    -14px;
+
+  box-shadow:
+    inset 0 0 70px rgba(0, 0, 0, 0.95),
+    inset 20px 0 30px rgba(0, 0, 0, 0.55),
+    inset -20px 0 30px rgba(0, 0, 0, 0.55),
+    0 25px 55px rgba(0, 0, 0, 0.95);
+
+  padding:
+    58px 20px 30px;
+
+  overflow:
+    hidden;
+}
+
+
+/* ---------------------------------------------------------
+   책장 상단 황동 몰딩
+   --------------------------------------------------------- */
+
+.bookshelf-container::before {
+  content: '';
+
+  position: absolute;
+
+  top: 18px;
+  left: -2px;
+  right: -2px;
+
+  height: 12px;
+
+  background:
+    linear-gradient(
+      to bottom,
+      #6e4a21 0%,
+      #e0b85d 20%,
+      #9c702d 45%,
+      #3d2511 70%,
+      #120a05 100%
+    );
+
+  border-top:
+    1px solid
+    rgba(255, 224, 148, 0.65);
+
+  border-bottom:
+    1px solid
+    rgba(0, 0, 0, 0.95);
+
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.95),
+    0 0 12px rgba(220, 170, 67, 0.22);
+
+  z-index: 20;
+}
+
+
+/* ---------------------------------------------------------
+   각 선반
+   --------------------------------------------------------- */
+
+.bookshelf-container .shelf-row {
+  width: 100%;
+
+  min-height:
+    220px;
+
+  display:
+    flex;
+
+  align-items:
+    flex-end;
+
+  /*
+   * ★ 책 사이의 빈 공간 제거
+   */
+  gap:
+    0 !important;
+
+  padding:
+    0 20px;
+
+  margin:
+    0 0 38px;
+
+  box-sizing:
+    border-box;
+
+  position:
+    relative;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 3%,
+      rgba(190, 125, 38, 0.25) 0%,
+      rgba(126, 73, 25, 0.10) 22%,
+      rgba(0, 0, 0, 0) 50%
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(8, 5, 3, 0.05),
+      rgba(0, 0, 0, 0.38) 55%,
+      rgba(0, 0, 0, 0.95) 100%
+    );
+
+  border-bottom:
+    20px solid #352116;
+
+  box-shadow:
+    inset 0 -30px 30px rgba(0, 0, 0, 0.8),
+    0 15px 22px rgba(0, 0, 0, 0.85);
+}
+
+
+/* ---------------------------------------------------------
+   ★ 선반마다 들어가는 황동 조명
+   --------------------------------------------------------- */
+
+.bookshelf-container .shelf-row::before {
+  content: '';
+
+  position: absolute;
+
+  top: 7px;
+
+  left: 6%;
+  right: 6%;
+
+  height: 4px;
+
+  background:
+    linear-gradient(
+      to right,
+      transparent,
+      rgba(218, 165, 67, 0.55) 10%,
+      rgba(255, 218, 139, 1) 50%,
+      rgba(218, 165, 67, 0.55) 90%,
+      transparent
+    );
+
+  border-radius:
+    50%;
+
+  box-shadow:
+    0 0 5px rgba(255, 211, 128, 0.95),
+    0 0 15px rgba(222, 162, 57, 0.75),
+    0 0 32px rgba(174, 99, 27, 0.4);
+
+  opacity:
+    0.9;
+
+  z-index:
+    1;
+
+  pointer-events:
+    none;
+}
+
+
+/* ---------------------------------------------------------
+   선반 앞쪽 황동 장식
+   --------------------------------------------------------- */
+
+.bookshelf-container .shelf-row::after {
+  content: '';
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  bottom: -20px;
+
+  height: 3px;
+
+  background:
+    linear-gradient(
+      to right,
+      rgba(112, 72, 25, 0.2),
+      rgba(211, 165, 70, 0.8) 25%,
+      rgba(245, 210, 125, 1) 50%,
+      rgba(211, 165, 70, 0.8) 75%,
+      rgba(112, 72, 25, 0.2)
+    );
+
+  box-shadow:
+    0 1px 6px rgba(0, 0, 0, 0.95),
+    0 0 8px rgba(225, 178, 77, 0.2);
+
+  z-index:
+    5;
+}
+
+
+/* =========================================================
+   ★ 책등
+   ========================================================= */
+
+.shelf-library.spine-mode .shelf-row {
+  gap:
+    0 !important;
+
+  padding-left:
+    20px;
+
+  padding-right:
+    20px;
+}
+
+
+/*
+ * ★★★ 핵심 ★★★
+ *
+ * flex-grow를 책의 원래 두께에 비례하게 줘서
+ * 선반 전체 폭을 빈틈없이 채운다.
+ *
+ * 따라서:
+ * 얇은 책 → 상대적으로 얇게
+ * 두꺼운 책 → 상대적으로 두껍게
+ *
+ * 하면서도 오른쪽 빈 공간이 사라진다.
+ */
+
+.shelf-library.spine-mode .spine-book {
+
+  flex:
+    0 0 var(--book-width, 34px);
+
+  width:
+    var(--book-width, 34px);
+
+  min-width:
+    var(--book-width, 34px);
+
+  height:
+    var(--book-height, 170px);
+
+  box-sizing:
+    border-box;
+
+  flex-shrink:
+    0;
+
+  box-sizing:
+    border-box;
+
+  position:
+    relative;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  overflow:
+    hidden;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.62) 0%,
+      rgba(255, 238, 190, 0.12) 5%,
+      rgba(255, 255, 255, 0.025) 20%,
+      rgba(0, 0, 0, 0.02) 58%,
+      rgba(0, 0, 0, 0.48) 100%
+    ),
+    var(--spine-color, #3b2920);
+
+  border-left:
+    1px solid
+    rgba(255, 228, 165, 0.25);
+
+  border-right:
+    1px solid
+    rgba(0, 0, 0, 0.72);
+
+  border-top:
+    1px solid
+    rgba(255, 224, 157, 0.16);
+
+  border-bottom:
+    1px solid
+    rgba(0, 0, 0, 0.75);
+
+  border-radius:
+    2px 3px 3px 2px;
+
+  box-shadow:
+    inset 2px 0 4px rgba(255, 255, 255, 0.07),
+    inset -4px 0 6px rgba(0, 0, 0, 0.38),
+    2px 0 5px rgba(0, 0, 0, 0.48);
+
+  cursor:
+    pointer;
+
+  transition:
+    transform 0.25s ease,
+    filter 0.25s ease;
+
+  z-index:
+    2;
+}
+
+
+/* ---------------------------------------------------------
+   책등 금박 장식
+   --------------------------------------------------------- */
+
+.shelf-library.spine-mode .spine-book::before {
+
+  content: '';
+
+  position: absolute;
+
+  top: 12px;
+  bottom: 12px;
+
+  left: 3px;
+  right: 3px;
+
+  border-top:
+    1px solid
+    rgba(239, 202, 104, 0.82);
+
+  border-bottom:
+    1px solid
+    rgba(239, 202, 104, 0.82);
+
+  box-shadow:
+    0 1px 0 rgba(255, 232, 154, 0.16);
+
+  pointer-events:
+    none;
+
+  z-index:
+    1;
+}
+
+
+/* ---------------------------------------------------------
+   책등 중앙 금박 문양
+   --------------------------------------------------------- */
+
+.shelf-library.spine-mode .spine-book::after {
+
+  content:
+    '✦';
+
+  position:
+    absolute;
+
+  left:
+    50%;
+
+  top:
+    50%;
+
+  transform:
+    translate(-50%, -50%);
+
+  font-family:
+    'Cormorant Garamond',
+    serif;
+
+  font-size:
+    0.52rem;
+
+  color:
+    rgba(236, 193, 87, 0.78);
+
+  text-shadow:
+    0 0 4px rgba(228, 174, 65, 0.35);
+
+  pointer-events:
+    none;
+
+  z-index:
+    1;
+}
+
+
+/* =========================================================
+   ★ 책 제목 — 가독성 개선
+   ========================================================= */
+
+.shelf-library.spine-mode .spine-book-title {
+
+  position:
+    relative;
+
+  z-index:
+    3;
+
+  width:
+    100%;
+
+  height:
+    100%;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  writing-mode:
+    vertical-rl;
+
+  /*
+   * mixed를 유지해서
+   * 한글은 자연스럽게,
+   * Macbeth / 1984 같은 영문은
+   * 예쁜 세로 양장본 느낌으로 표시
+   */
+  text-orientation:
+    mixed;
+
+  text-align:
+    center;
+
+  font-family:
+    'Cormorant Garamond',
+    'Noto Sans KR',
+    serif;
+
+  /*
+   * 기존보다 조금 크게
+   */
+  font-size:
+    0.76rem;
+
+  font-weight:
+    600;
+
+  /*
+   * ★ 키르케 글자 사이 이상한 간격의 원인 중 하나인
+   * letter-spacing을 제거한다.
+   */
+  letter-spacing:
+    normal;
+
+  /*
+   * 세로 글자의 간격도 균일하게
+   */
+  line-height:
+    1;
+
+  color:
+    var(
+      --spine-text-color,
+      #f0dfb7
+    );
+
+  white-space:
+    nowrap;
+
+  overflow:
+    hidden;
+
+  padding:
+    16px 3px;
+
+  box-sizing:
+    border-box;
+
+  /*
+   * 검은 책에서도 금박 글씨가 또렷하게 보이도록
+   */
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.85),
+    0 0 2px rgba(0, 0, 0, 0.45);
+}
+
+
+/* ---------------------------------------------------------
+   밝은 책등에서는 글자가 확실하게 어둡게
+   --------------------------------------------------------- */
+
+.shelf-library.spine-mode .spine-book[style*="--spine-text-color: #2b2118"]
+.spine-book-title {
+  text-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.25);
+}
+
+
+/* ---------------------------------------------------------
+   책 사이 경계 — 실제 책을 붙여 꽂은 느낌
+   --------------------------------------------------------- */
+
+.shelf-library.spine-mode .spine-book + .spine-book {
+
+  margin-left:
+    0;
+
+  box-shadow:
+    -1px 0 0 rgba(0, 0, 0, 0.75),
+    2px 0 5px rgba(0, 0, 0, 0.38),
+    inset 2px 0 3px rgba(255, 255, 255, 0.035);
+}
+
+
+/* ---------------------------------------------------------
+   책을 살짝 뽑는 hover
+   --------------------------------------------------------- */
+
+.shelf-library.spine-mode .spine-book:hover {
+
+  transform:
+    translateY(-8px);
+
+  filter:
+    brightness(1.12);
+
+  z-index:
+    20;
+
+  box-shadow:
+    0 9px 16px rgba(0, 0, 0, 0.75),
+    0 0 9px rgba(218, 169, 71, 0.18);
+}
+
+
+/* =========================================================
+   모바일
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+  .bookshelf-container {
+    padding:
+      52px 10px 25px;
+  }
+
+  .bookshelf-container .shelf-row {
+    padding-left:
+      8px;
+
+    padding-right:
+      8px;
+  }
+
+  .shelf-library.spine-mode .shelf-row {
+    gap:
+      0 !important;
+
+    padding-left:
+      8px;
+
+    padding-right:
+      8px;
+  }
+
+  .shelf-library.spine-mode .spine-book-title {
+    font-size:
+      0.68rem;
+
+    padding:
+      25px 2px;
+  }
+}
+
+/* =========================================================
+   ATHENAEUM — BOOK SPINE FINAL FIX
+   ========================================================= */
+
+
+
+
+/* ---------------------------------------------------------
+   책 사이 간격 완전 제거
+   --------------------------------------------------------- */
+
+.shelf-library.spine-mode .shelf-row {
+
+  gap:
+    0 !important;
+
+  column-gap:
+    0 !important;
+
+  row-gap:
+    0 !important;
+}
+
+
+/* ---------------------------------------------------------
+   책등 자체를 실제 오래된 양장본처럼
+   --------------------------------------------------------- */
+
+.shelf-library.spine-mode .spine-book {
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.62) 0%,
+      rgba(255, 240, 195, 0.13) 6%,
+      rgba(255, 255, 255, 0.035) 20%,
+      rgba(255, 255, 255, 0.015) 55%,
+      rgba(0, 0, 0, 0.52) 100%
+    ),
+    var(--spine-color, #3b2920);
+
+  border-left:
+    1px solid
+    rgba(255, 226, 160, 0.28);
+
+  border-right:
+    2px solid
+    rgba(0, 0, 0, 0.72);
+
+  border-top:
+    1px solid
+    rgba(255, 222, 145, 0.18);
+
+  border-bottom:
+    1px solid
+    rgba(0, 0, 0, 0.8);
+
+  border-radius:
+    2px 3px 3px 2px;
+
+  box-shadow:
+    inset 2px 0 4px rgba(255, 255, 255, 0.07),
+    inset -4px 0 7px rgba(0, 0, 0, 0.4),
+    2px 0 5px rgba(0, 0, 0, 0.5);
+
+  overflow:
+    hidden;
+}
+
+
+/* ---------------------------------------------------------
+   금박 띠
+   --------------------------------------------------------- */
+
+.shelf-library.spine-mode .spine-book::before {
+
+  content:
+    '';
+
+  position:
+    absolute;
+
+  left:
+    3px;
+
+  right:
+    3px;
+
+  top:
+    12px;
+
+  bottom:
+    12px;
+
+  border-top:
+    1px solid
+    rgba(237, 198, 99, 0.9);
+
+  border-bottom:
+    1px solid
+    rgba(237, 198, 99, 0.9);
+
+  box-shadow:
+    0 1px 0
+    rgba(255, 232, 156, 0.2);
+
+  pointer-events:
+    none;
+
+  z-index:
+    1;
+}
+
+
+/* ---------------------------------------------------------
+   중앙 금박 장식
+   --------------------------------------------------------- */
+
+.shelf-library.spine-mode .spine-book::after {
+
+  content:
+    '✦';
+
+  position:
+    absolute;
+
+  left:
+    50%;
+
+  top:
+    50%;
+
+  transform:
+    translate(-50%, -50%);
+
+  font-family:
+    'Cormorant Garamond',
+    serif;
+
+  font-size:
+    0.58rem;
+
+  color:
+    rgba(238, 195, 88, 0.82);
+
+  text-shadow:
+    0 0 4px
+    rgba(224, 172, 60, 0.35);
+
+  pointer-events:
+    none;
+
+  z-index:
+    2;
+}
+
+
+/* =========================================================
+   ★ 책 제목 — 가독성 최종 수정
+   ========================================================= */
+
+.shelf-library.spine-mode .spine-book-title {
+
+  position:
+    relative;
+
+  z-index:
+    4;
+
+  width:
+    100%;
+
+  height:
+    100%;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  writing-mode:
+    vertical-rl;
+
+  /*
+   * 한글은 한 글자씩 균일하게 세로 배치
+   * 숫자도 찌그러지지 않도록 한다.
+   */
+  text-orientation:
+    upright;
+
+  font-family:
+    'Cormorant Garamond',
+    'Noto Serif KR',
+    'Noto Sans KR',
+    serif;
+
+  font-size:
+    0.78rem;
+
+  font-weight:
+    600;
+
+  /*
+   * ★ 키르케처럼 글자 사이가 벌어지는 문제 제거
+   */
+  letter-spacing:
+    0 !important;
+
+  word-spacing:
+    0 !important;
+
+  line-height:
+    1 !important;
+
+  text-align:
+    center;
+
+  color:
+    var(
+      --spine-text-color,
+      #ead9b2
+    );
+
+  white-space:
+    nowrap;
+
+  overflow:
+    hidden;
+
+  padding:
+    28px 2px;
+
+  box-sizing:
+    border-box;
+
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.9),
+    0 0 2px rgba(0, 0, 0, 0.55);
+}
+
+
+/* ---------------------------------------------------------
+   책이 너무 얇을 때 제목도 자동으로 작게
+   --------------------------------------------------------- */
+
+.shelf-library.spine-mode
+.spine-book[style*="--book-width: 2"]
+.spine-book-title {
+
+  font-size:
+    0.63rem;
+}
+
+
+/* ---------------------------------------------------------
+   책 사이의 경계
+   --------------------------------------------------------- */
+
+.shelf-library.spine-mode
+.spine-book + .spine-book {
+
+  margin-left:
+    0 !important;
+
+  box-shadow:
+    -1px 0 0 rgba(0, 0, 0, 0.8),
+    2px 0 5px rgba(0, 0, 0, 0.38),
+    inset 2px 0 3px rgba(255, 255, 255, 0.035);
+}
+
+
+/* =========================================================
+   책장 — 고급 원목 질감
+   ========================================================= */
+
+.bookshelf-container {
+
+  background:
+
+    /*
+     * 좌우 원목 기둥
+     */
+    linear-gradient(
+      90deg,
+      #120a06 0%,
+      #3a2111 2%,
+      #1b0e08 5%,
+      transparent 8%,
+      transparent 92%,
+      #1b0e08 95%,
+      #3a2111 98%,
+      #120a06 100%
+    ),
+
+    /*
+     * 목재 안쪽의 자연스러운 밝기
+     */
+    radial-gradient(
+      ellipse at 50% 20%,
+      rgba(113, 65, 27, 0.17),
+      rgba(0, 0, 0, 0) 60%
+    ),
+
+    #0b0705;
+
+  box-shadow:
+
+    inset 0 0 80px
+    rgba(0, 0, 0, 0.95),
+
+    inset 15px 0 25px
+    rgba(0, 0, 0, 0.55),
+
+    inset -15px 0 25px
+    rgba(0, 0, 0, 0.55),
+
+    0 25px 55px
+    rgba(0, 0, 0, 0.95);
+}
+
+
+/* ---------------------------------------------------------
+   선반 내부 깊이
+   --------------------------------------------------------- */
+
+.bookshelf-container .shelf-row {
+
+  background:
+
+    /*
+     * 조명에서 내려오는 앰버빛
+     */
+    radial-gradient(
+      ellipse at 50% 0%,
+      rgba(214, 153, 58, 0.23) 0%,
+      rgba(156, 94, 30, 0.09) 23%,
+      transparent 52%
+    ),
+
+    /*
+     * 깊은 책장 안쪽
+     */
+    linear-gradient(
+      to bottom,
+      rgba(15, 9, 5, 0.05),
+      rgba(0, 0, 0, 0.28) 45%,
+      rgba(0, 0, 0, 0.92) 100%
+    );
+
+  border-bottom:
+    20px solid #362216;
+
+  box-shadow:
+    inset 0 -30px 30px
+    rgba(0, 0, 0, 0.8),
+
+    0 15px 22px
+    rgba(0, 0, 0, 0.85);
+}
+
+
+/* ---------------------------------------------------------
+   선반 조명
+   --------------------------------------------------------- */
+
+.bookshelf-container .shelf-row::before {
+
+  content:
+    '';
+
+  position:
+    absolute;
+
+  top:
+    7px;
+
+  left:
+    7%;
+
+  right:
+    7%;
+
+  height:
+    4px;
+
+  background:
+    linear-gradient(
+      to right,
+      transparent,
+      rgba(216, 165, 68, 0.5) 12%,
+      rgba(255, 218, 133, 0.95) 50%,
+      rgba(216, 165, 68, 0.5) 88%,
+      transparent
+    );
+
+  border-radius:
+    50%;
+
+  box-shadow:
+    0 0 5px
+    rgba(255, 216, 133, 0.95),
+
+    0 0 15px
+    rgba(222, 162, 57, 0.7),
+
+    0 0 32px
+    rgba(174, 99, 27, 0.35);
+
+  z-index:
+    1;
+
+  pointer-events:
+    none;
+}
+
+
+/* ---------------------------------------------------------
+   선반 앞 황동 장식
+   --------------------------------------------------------- */
+
+.bookshelf-container .shelf-row::after {
+
+  content:
+    '';
+
+  position:
+    absolute;
+
+  left:
+    0;
+
+  right:
+    0;
+
+  bottom:
+    -20px;
+
+  height:
+    3px;
+
+  background:
+    linear-gradient(
+      to right,
+      rgba(112, 72, 25, 0.2),
+      rgba(211, 165, 70, 0.8) 25%,
+      rgba(245, 210, 125, 1) 50%,
+      rgba(211, 165, 70, 0.8) 75%,
+      rgba(112, 72, 25, 0.2)
+    );
+
+  box-shadow:
+    0 1px 6px
+    rgba(0, 0, 0, 0.95);
+
+  z-index:
+    5;
+}
+
+
+/* ---------------------------------------------------------
+   hover
+   --------------------------------------------------------- */
+
+.shelf-library.spine-mode
+.spine-book:hover {
+
+  transform:
+    translateY(-8px);
+
+  filter:
+    brightness(1.12);
+
+  z-index:
+    20;
+
+  box-shadow:
+    0 9px 16px
+    rgba(0, 0, 0, 0.75),
+
+    0 0 9px
+    rgba(218, 169, 71, 0.18);
+}
+
+/* =========================================================
+   ATHENAEUM :: 영어 책등 제목
+   ========================================================= */
+
+.shelf-library.spine-mode .spine-latin-run {
+  display: inline-block;
+
+  writing-mode: horizontal-tb;
+  text-orientation: mixed;
+
+  white-space: nowrap;
+
+  font-family:
+    'Cormorant Garamond',
+    serif;
+
+  font-size:
+    0.76rem;
+
+  line-height:
+    1;
+
+  transform:
+    rotate(90deg);
+
+  transform-origin:
+    center center;
+
+  flex-shrink:
+    0;
+}
+/* =========================================================
+   ATHENAEUM — 책장 장식 레이어가 클릭을 막지 않도록 수정
+   ========================================================= */
+
+.bookshelf-container::before,
+.bookshelf-container::after,
+.bookshelf-container .shelf-row::before,
+.bookshelf-container .shelf-row::after,
+.shelf-library.spine-mode .spine-book::before,
+.shelf-library.spine-mode .spine-book::after {
+  pointer-events: none !important;
+}
+
+/* 실제 버튼과 책은 항상 클릭 가능 */
+.bookshelf-controls button,
+#tab-my,
+#tab-public,
+.cover-book,
+.spine-book {
+  pointer-events: auto !important;
+}
+
+/* =========================================================
+   ATHENAEUM :: CLICK / HOVER LAYER FIX
+   ========================================================= */
+
+/* 탐색 화면 자체를 최상위 인터랙션 영역으로 */
+#view-explore {
+  position: relative !important;
+  z-index: 100 !important;
+}
+
+/* 카드 내부도 클릭 가능한 레이어로 */
+#view-explore .card-border-inner {
+  position: relative !important;
+  z-index: 101 !important;
+}
+
+/* 서재 탭 버튼 */
+#view-explore #tab-my,
+#view-explore #tab-public {
+  position: relative !important;
+  z-index: 1000 !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+/* 표지/책등 버튼 */
+#view-explore .bookshelf-controls,
+#view-explore .bookshelf-controls button {
+  position: relative !important;
+  z-index: 1000 !important;
+}
+
+#view-explore .bookshelf-controls button {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+/* 실제 책 */
+#view-explore .cover-book,
+#view-explore .spine-book {
+  position: relative !important;
+  z-index: 100 !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+/* 책 내부의 이미지/텍스트가 클릭을 가로채지 않게 */
+#view-explore .cover-book-inner,
+#view-explore .cover-book-inner img,
+#view-explore .cover-book-placeholder,
+#view-explore .spine-book-title {
+  pointer-events: none !important;
+}
+
+/* 삭제 버튼만 다시 클릭 가능 */
+#view-explore .book-delete-btn {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  z-index: 1001 !important;
+}
+
+/* 책장 장식 레이어는 절대로 클릭을 가로채지 않게 */
+#view-explore .bookshelf-container::before,
+#view-explore .bookshelf-container::after,
+#view-explore .shelf-row::before,
+#view-explore .shelf-row::after,
+#view-explore .spine-book::before,
+#view-explore .spine-book::after,
+#view-explore .shelf-book::before,
+#view-explore .shelf-book::after {
+  pointer-events: none !important;
+}
+
+/* 책장 자체는 클릭 이벤트를 막지 않음 */
+#view-explore .bookshelf-container,
+#view-explore .shelf-library,
+#view-explore .shelf-row {
+  pointer-events: auto !important;
+}
+
+/* 로그인 모달 버튼 클릭 보정 */
+#login-modal,
+#login-modal .modal-card,
+#login-modal button {
+  pointer-events: auto !important;
+}
+
+#login-modal {
+  z-index: 10000 !important;
+}
+
+#login-modal .modal-card {
+  position: relative;
+  z-index: 10001 !important;
+}
+
+#login-modal button {
+  position: relative;
+  z-index: 10002 !important;
+  cursor: pointer !important;
+}
+
+/* 취소 버튼 hover */
+#login-modal .login-cancel-btn:hover,
+#login-modal button.archival-btn.secondary:hover {
+  background: #2d2d2d !important;
+  border-color: var(--gold-accent) !important;
+  color: #ffffff !important;
+}
+
+/* =========================================================
+   ATHENAEUM :: 책등 제목 방향 최종 수정
+   ========================================================= */
+
+/*
+ * 한국어가 포함된 제목
+ * → 숫자 / 영어 / 한국어 모두 세로
+ */
+.shelf-library.spine-mode .spine-mixed-title {
+  display: inline-block;
+
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+
+  white-space: nowrap;
+
+  font-family:
+    'Cormorant Garamond',
+    'Noto Sans KR',
+    serif;
+
+  font-size: 0.72rem;
+  line-height: 1;
+
+  letter-spacing: 0;
+
+  color:
+    var(
+      --spine-text-color,
+      #f0dfb7
+    );
+
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.85),
+    0 0 2px rgba(0, 0, 0, 0.45);
+}
+
+
+/*
+ * 한국어가 없는 제목
+ * → 영어/숫자 모두 가로 방향으로 읽고
+ * → 책등에서는 90도 회전
+ */
+.shelf-library.spine-mode .spine-latin-run {
+  display: inline-block;
+
+  writing-mode: horizontal-tb;
+  text-orientation: mixed;
+
+  white-space: nowrap;
+
+  font-family:
+    'Cormorant Garamond',
+    serif;
+
+  font-size: 0.76rem;
+  line-height: 1;
+
+  transform:
+    rotate(90deg);
+
+  transform-origin:
+    center center;
+
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   ATHENAEUM :: 페이지 수 기반 책등 두께 최종 고정
+   ========================================================= */
+
+.shelf-library.spine-mode .spine-book {
+  flex:
+    0 0 var(--book-width, 34px) !important;
+
+  width:
+    var(--book-width, 34px) !important;
+
+  min-width:
+    var(--book-width, 34px) !important;
+
+  max-width:
+    var(--book-width, 78px) !important;
+
+  height:
+    var(--book-height, 170px) !important;
+
+  flex-shrink: 0 !important;
+  box-sizing: border-box;
+}
+/* =========================================================
+   ATHENAEUM :: 책등 선반 채우기
+   ========================================================= */
+
+/* 기본: 실제 계산된 책 크기 그대로 */
+.shelf-library.spine-mode .spine-book {
+  flex:
+    0 0 var(--book-width, 34px);
+
+  width:
+    var(--book-width, 34px);
+
+  min-width:
+    var(--book-width, 34px);
+
+  max-width:
+    var(--book-width, 78px);
+
+  height:
+    var(--book-height, 170px);
+
+  flex-shrink:
+    0;
+
+  box-sizing:
+    border-box;
+}
+
+/* 꽉 찬 선반은 책등의 상대적인 두께를 유지하면서
+   남는 공간까지 채운다. */
+.shelf-library.spine-mode .shelf-row.shelf-row-full .spine-book {
+  flex:
+    var(--book-grow, 1)
+    1
+    0;
+
+  width:
+    auto;
+
+  min-width:
+    0;
+
+  max-width:
+    none;
+
+  flex-shrink:
+    1;
+}
+
+/* =========================================================
+   ATHENAEUM :: 한국어 + 영어 혼합 책등 제목 최종 수정
+   ========================================================= */
+
+.shelf-library.spine-mode .spine-mixed-title {
+  display: inline-block;
+
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+
+  white-space: nowrap;
+
+  /* 한국어가 확실하게 지원되는 폰트를 먼저 사용 */
+  font-family:
+    'Noto Sans KR',
+    'Noto Serif KR',
+    sans-serif;
+
+  font-size: 0.64rem;
+  font-weight: 500;
+
+  line-height: 1.05;
+  letter-spacing: 0;
+
+  color:
+    var(
+      --spine-text-color,
+      #ead9b2
+    );
+
+  text-align: center;
+
+  /* 기존 제목 스타일의 영향 최소화 */
+  transform: none;
+  word-spacing: 0;
+
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.75);
+
+  overflow: hidden;
+}
+
+:root {
+  --bg-dark-wood: #0d0d0d;
+  --bg-deep-cabinet: #141414;
+  --parchment-bg: #1a1a1a;
+  --parchment-border: #424242;
+  --gold-accent: #c4c4c4;
+  --gold-muted: #6e6e6e;
+  --text-parchment: #d4d4d4;
+  --text-muted: #8a8a8a;
+  --crimson-ink: #2a2a2a;
+  
+  --font-title: 'Cormorant Garamond', 'Noto Sans KR', sans-serif;
+  --font-body: 'Noto Sans KR', sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-dark-wood);
+  background-image: 
+    radial-gradient(circle at 50% 30%, #1f1f1f 0%, #0d0d0d 75%),
+    linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.9));
+  color: var(--text-parchment);
+  font-family: var(--font-body);
+  font-weight: 300;
+  min-height: 100vh;
+  position: relative;
+}
+
+.hidden { display: none !important; }
+
+.vignette-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  box-shadow: inset 0 0 130px rgba(0, 0, 0, 0.95);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.header {
+  position: relative;
+  z-index: 2;
+  padding: 2.5rem 2rem 1.5rem;
+  border-bottom: 1px solid rgba(196, 196, 196, 0.15);
+  background: linear-gradient(to bottom, rgba(13, 13, 13, 0.95), transparent);
+}
+
+.header-container {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.2rem;
+  letter-spacing: 0.35rem;
+  color: var(--gold-accent);
+  margin: 0;
+  font-weight: 600;
+}
+
+.subtitle {
+  margin: 0.2rem 0 0 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.15rem;
+  color: var(--text-muted);
+}
+
+/* 네비게이션 메뉴 */
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  padding: 0;
+}
+
+.nav-item:hover {
+  color: var(--gold-accent);
+}
+
+.nav-divider {
+  color: var(--parchment-border);
+  font-size: 0.8rem;
+  opacity: 0.5;
+}
+
+.lang-selector {
+  font-family: 'Cormorant Garamond', var(--font-body);
+  font-size: 0.95rem;
+}
+
+.lang-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.lang-btn.active {
+  color: var(--gold-accent);
+}
+
+.divider {
+  color: var(--gold-muted);
+  margin: 0 8px;
+  font-size: 0.7rem;
+}
+
+.main-wrapper {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 3rem auto;
+  padding: 0 1.5rem;
+}
+
+/* 메인 홈 깔끔한 컨테이너 */
+.hero-clean-container {
+  padding: 2rem 0;
+}
+
+.parchment-card {
+  background: var(--parchment-bg);
+  border: 1px solid var(--parchment-border);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
+  padding: 12px;
+  border-radius: 2px;
+}
+
+.card-border-inner {
+  border: 1px solid rgba(196, 196, 196, 0.2);
+  padding: 2.5rem 2rem;
+  position: relative;
+}
+
+.hero-center {
+  text-align: center;
+}
+
+.ornament {
+  position: absolute;
+  color: var(--gold-muted);
+  font-size: 1rem;
+}
+
+.top-left { top: 8px; left: 12px; }
+.top-right { top: 8px; right: 12px; }
+.bottom-left { bottom: 8px; left: 12px; }
+.bottom-right { bottom: 8px; right: 12px; }
+
+.hero-title, .form-title {
+  font-size: 1.5rem;
+  color: var(--gold-accent);
+  margin-top: 0;
+  font-weight: 400;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: var(--gold-accent);
+}
+
+.separator {
+  text-align: center;
+  color: var(--gold-muted);
+  margin: 1rem 0 2rem;
+  font-size: 0.85rem;
+  opacity: 0.6;
+}
+
+.hero-desc {
+  color: var(--text-parchment);
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 2.5rem;
+  word-break: keep-all;
+}
+
+.action-group {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+/* 검색창 영역 */
+.search-section {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.search-box {
+  display: flex;
+  gap: 10px;
+}
+
+input[type="text"], input[type="url"], select, textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--bg-deep-cabinet);
+  border: 1px solid var(--parchment-border);
+  color: var(--text-parchment);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--gold-accent);
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #181818;
+  border: 1px solid var(--gold-accent);
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 999;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.95);
+  margin-top: 4px;
+}
+
+.search-item {
+  padding: 0.9rem 1.2rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: background 0.2s;
+}
+
+.search-item:hover {
+  background: #2a2a2a;
+  color: #ffffff;
+}
+
+.search-item-thumb {
+  width: 36px;
+  height: 50px;
+  object-fit: cover;
+  background: #333;
+  flex-shrink: 0;
+}
+
+.search-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  overflow: hidden;
+}
+
+.search-item-title {
+  font-size: 0.95rem;
+  color: var(--text-parchment);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-item-author {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* 도서 입력 폼 */
+.book-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.form-row {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.cover-preview-box {
+  width: 110px;
+  height: 150px;
+  background: var(--bg-deep-cabinet);
+  border: 1px dashed var(--parchment-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cover-preview-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.no-cover-text {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.form-inputs {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.options-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+
+/* 클릭형 별점 스타일 */
+.star-rating-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 42px;
+  background: var(--bg-deep-cabinet);
+  border: 1px solid var(--parchment-border);
+  padding: 0 1rem;
+}
+
+.star-rating {
+  display: flex;
+  font-size: 1.3rem;
+  color: var(--parchment-border);
+  cursor: pointer;
+  user-select: none;
+}
+
+.star-rating .star {
+  transition: color 0.15s ease;
+}
+
+.star-rating .star.full {
+  color: #d4af37;
+}
+
+.star-rating .star.half {
+  background: linear-gradient(90deg, #d4af37 50%, var(--parchment-border) 50%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.rating-value-text {
+  font-size: 0.9rem;
+  color: var(--gold-accent);
+}
+
+.archival-btn {
+  background: #222222;
+  border: 1px solid var(--gold-muted);
+  color: var(--text-parchment);
+  padding: 0.75rem 1.5rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.archival-btn:hover {
+  border-color: var(--gold-accent);
+  color: #ffffff;
+  background: #2d2d2d;
+}
+
+.archival-btn.secondary {
+  background: transparent;
+  border-color: rgba(110, 110, 110, 0.4);
+  color: var(--text-muted);
+}
+
+.submit-btn {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+/* 모달 */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(5, 5, 5, 0.92);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal-card {
+  background: var(--bg-deep-cabinet);
+  border: 1px solid var(--parchment-border);
+  padding: 2.5rem 2rem;
+  max-width: 440px;
+  width: 85%;
+  text-align: center;
+}
+
+.seal-icon { font-size: 2.2rem; margin-bottom: 1rem; }
+.modal-title { color: var(--gold-accent); font-size: 1.25rem; font-weight: 400; margin-bottom: 1rem; }
+.modal-message { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2rem; }
+.modal-actions { display: flex; gap: 10px; justify-content: center; }
+
+/* =========================================
+   [NEW] 입체 고서재 책장 (Bookshelf) 스타일
+   ========================================= */
+
+/* 책장 전체 외곽 (황동 레일 & 깊이감 있는 입체 목재 프레임) */
+.bookshelf-container {
+  background: radial-gradient(circle at 50% 50%, #1a1613 0%, #0d0a08 100%);
+  border: 12px solid #231c17;
+  outline: 1px solid rgba(212, 175, 55, 0.2);
+  outline-offset: -12px;
+  border-radius: 3px;
+  box-shadow: 
+    inset 0 0 60px rgba(0, 0, 0, 0.95),
+    0 20px 45px rgba(0, 0, 0, 0.9);
+  padding: 40px 20px 15px;
+  margin: 2.5rem 0;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* 상단 황동(Brass) 이동 사다리 레일 디테일 */
+.bookshelf-container::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: -8px;
+  right: -8px;
+  height: 8px;
+  background: linear-gradient(to bottom, #e5c158 0%, #b89332 50%, #5c4715 100%);
+  box-shadow: 
+    0 4px 10px rgba(0, 0, 0, 0.95),
+    0 0 12px rgba(229, 193, 88, 0.3);
+  z-index: 10;
+  border-radius: 2px;
+}
+
+/* 선반 (각 층) */
+.shelf-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  height: 200px;
+  padding: 0 15px;
+  margin-bottom: 35px;
+  position: relative;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 35%, rgba(0,0,0,0.85) 100%);
+  border-bottom: 18px solid #2d241e;
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.9);
+}
+
+/* 선반 하단 황동 앤틱 림 트림 라인 */
+.shelf-row::after {
+  content: '';
+  position: absolute;
+  bottom: -18px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(to right, rgba(184,147,50,0.1), rgba(229,193,88,0.6) 50%, rgba(184,147,50,0.1));
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* 양장본 서적 디자인 */
+.shelf-book {
+  width: 34px;
+  height: 150px;
+  background: linear-gradient(to right, #2b231d 0%, #1f1813 80%, #15100c 100%);
+  border-left: 2px solid rgba(255, 255, 255, 0.2);
+  border-right: 3px solid rgba(0, 0, 0, 0.9);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 2px 4px 4px 2px;
+  box-shadow: 5px 0 12px rgba(0, 0, 0, 0.8);
+  transition: transform 0.25s ease, filter 0.25s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+/* 도서 등표지 금박 띠 라인 디테일 */
+.shelf-book::before {
+  content: '';
+  position: absolute;
+  top: 15px;
+  bottom: 15px;
+  left: 4px;
+  right: 4px;
+  border-top: 1px solid rgba(212, 175, 55, 0.4);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.4);
+  pointer-events: none;
+}
+
+.shelf-book:hover {
+  transform: translateY(-10px) scale(1.03);
+  filter: brightness(1.2);
+}
+
+/* 검색창 및 API 검색 결과 스타일 */
+.search-section {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.search-box {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.search-box input {
+  flex: 1;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-color, #2e261f);
+  color: var(--text-main, #e8e1d7);
+  border-radius: 4px;
+  font-size: 0.95rem;
+}
+
+.search-box input:focus {
+  border-color: var(--accent-gold, #c5a059);
+  outline: none;
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #1a1410;
+  border: 1px solid var(--accent-gold, #c5a059);
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 100;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.8);
+}
+
+.search-item {
+  padding: 0.8rem;
+  border-bottom: 1px solid #2e261f;
+  cursor: pointer;
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.search-item:hover {
+  background: rgba(197, 160, 89, 0.15);
+}
+
+.search-item img {
+  width: 40px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.search-item-info {
+  flex: 1;
+  text-align: left;
+}
+
+.search-item-title {
+  font-size: 0.9rem;
+  color: #e8e1d7;
+  font-weight: bold;
+}
+
+.search-item-sub {
+  font-size: 0.8rem;
+  color: #8c8275;
+  margin-top: 0.2rem;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* =========================================================
+   ATHENAEUM 추가 스타일
+   - 빈티지 Dark Academia 책장
+   - 표지/책등 보기 전환
+   - 책등의 표지 대표색 + 책 두께/높이 차이
+   ========================================================= */
+
+.bookshelf-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin: 0 0 14px;
+  flex-wrap: wrap;
+}
+
+.bookshelf-view-label {
+  margin-right: 4px;
+  color: #8c8275;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+
+.bookshelf-view-btn {
+  appearance: none;
+  border: 1px solid #554431;
+  background: #17110c;
+  color: #9d907f;
+  padding: 0.45rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.bookshelf-view-btn:hover,
+.bookshelf-view-btn.active {
+  color: #e8e1d7;
+  border-color: #a98750;
+  background: #2a1e13;
+  box-shadow: inset 0 0 12px rgba(197,160,89,0.08);
+}
+
+/* 실제 나무 책장처럼 깊게 보이는 벽 */
+.bookshelf-wall {
+  position: relative;
+  overflow: hidden;
+  padding: 34px 22px 20px;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.38), transparent 8%, transparent 92%, rgba(0,0,0,.45)),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 7px),
+    linear-gradient(180deg, #24180f 0%, #160e09 48%, #0c0704 100%);
+  border: 10px solid #2c1d12;
+  border-radius: 3px;
+  box-shadow:
+    inset 0 0 0 2px #4a3421,
+    inset 0 0 45px rgba(0,0,0,.95),
+    0 18px 35px rgba(0,0,0,.75);
+}
+
+.bookshelf-wall::before {
+  content: "ATHENAEUM";
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(196,160,89,.38);
+  font-family: var(--font-title);
+  font-size: .68rem;
+  letter-spacing: .28rem;
+  pointer-events: none;
+}
+
+.bookshelf-wall::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 5px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(197,160,89,.55), transparent);
+  box-shadow: 0 0 8px rgba(197,160,89,.15);
+}
+
+/* JS가 생성하는 선반 */
+.library-grid.shelf-library {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.shelf-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  min-height: 184px;
+  padding: 0 12px 15px;
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.55)),
+    linear-gradient(90deg, rgba(255,255,255,.015), transparent 35%, rgba(0,0,0,.16));
+  border-bottom: 16px solid #3a2718;
+  box-shadow:
+    inset 0 -4px 7px rgba(0,0,0,.8),
+    0 12px 15px rgba(0,0,0,.55);
+}
+
+.shelf-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -11px;
+  height: 4px;
+  background: linear-gradient(90deg, #2a1b10, #6b4c2d 48%, #2a1b10);
+  box-shadow: 0 2px 3px rgba(0,0,0,.8);
+}
+
+.shelf-row::after {
+  content: "";
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  bottom: -4px;
+  height: 1px;
+  background: rgba(214,178,99,.45);
+}
+
+.shelf-row.empty-row {
+  min-height: 150px;
+  justify-content: center;
+  align-items: center;
+}
+
+.shelf-empty-note {
+  color: #766958;
+  font-family: var(--font-title);
+  font-style: italic;
+  font-size: .95rem;
+}
+
+/* 표지 보기 */
+.library-grid.cover-mode .shelf-row {
+  min-height: 238px;
+  gap: 12px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.cover-book {
+  width: 82px;
+  height: 178px;
+  flex: 0 0 auto;
+  position: relative;
+  cursor: pointer;
+  transform-origin: bottom center;
+  transition: transform .25s ease, filter .25s ease;
+}
+
+.cover-book:nth-child(3n) { transform: rotate(-.7deg); }
+.cover-book:nth-child(4n) { transform: rotate(.8deg); }
+
+.cover-book:hover {
+  transform: translateY(-12px) rotate(0deg) scale(1.035);
+  z-index: 10;
+  filter: brightness(1.12);
+}
+
+.cover-book-inner {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 2px 5px 5px 2px;
+  background: #261a11;
+  border: 1px solid rgba(197,160,89,.28);
+  box-shadow:
+    -5px 0 7px rgba(0,0,0,.5),
+    7px 8px 14px rgba(0,0,0,.65),
+    inset -5px 0 8px rgba(0,0,0,.25);
+}
+
+.cover-book-inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cover-book-placeholder {
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: linear-gradient(135deg, #352416, #17100b);
+  color: #d0b57a;
+}
+
+.cover-book-title {
+  font-family: var(--font-title);
+  font-size: .95rem;
+  line-height: 1.2;
+  color: #eadfcf;
+}
+
+.cover-book-author {
+  margin-top: 8px;
+  font-size: .68rem;
+  color: #9c8b75;
+}
+
+.book-delete-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  border: 1px solid #b28b4f;
+  background: #120c08;
+  color: #b97469;
+  cursor: pointer;
+  z-index: 20;
+  line-height: 17px;
+  padding: 0;
+}
+
+/* 책등 보기: 실제 서가처럼 서로 붙어서 꽂힘 */
+.library-grid.spine-mode .shelf-row {
+  gap: 0;
+  min-height: 190px;
+  padding-left: 18px;
+  padding-right: 18px;
+}
+.spine-book {
+  position: relative;
+  flex: 0 0 auto;
+  width: var(--book-width, 34px);
+  height: var(--book-height, 158px);
+  margin-left: -1px;
+  cursor: pointer;
+  border-radius: 2px 3px 3px 1px;
+  border-left: 1px solid rgba(255,255,255,.15);
+  border-right: 3px solid rgba(0,0,0,.72);
+  border-top: 1px solid rgba(255,255,255,.08);
+  box-sizing: border-box;
+  background: var(--spine-color, #4a3425);
+  box-shadow:
+    3px 0 5px rgba(0,0,0,.6),
+    inset 2px 0 3px rgba(255,255,255,.08),
+    inset -4px 0 7px rgba(0,0,0,.25);
+  transition: transform .22s ease, filter .22s ease;
+}
+
+.spine-book::before,
+.spine-book::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  height: 1px;
+  background: rgba(221,188,112,.58);
+  box-shadow: 0 0 2px rgba(221,188,112,.2);
+}
+
+.spine-book::before { top: 15px; }
+.spine-book::after { bottom: 15px; }
+
+.spine-book:hover {
+  transform: translateY(-12px) rotate(-1deg);
+  filter: brightness(1.18) saturate(.9);
+  z-index: 20;
+}
+
+.spine-book-title {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(100% - 8px);
+  transform: translate(-50%, -50%) rotate(180deg);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  color: rgba(246,231,193,.92);
+  font-family: var(--font-title);
+  font-size: clamp(.57rem, 1vw, .72rem);
+  line-height: 1;
+  text-align: center;
+  overflow: hidden;
+  max-height: calc(100% - 48px);
+  text-shadow: 1px 1px 1px rgba(0,0,0,.7);
+  pointer-events: none;
+}
+
+.spine-book-author {
+  position: absolute;
+  bottom: 23px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  text-align: center;
+  font-size: .48rem;
+  color: rgba(238,219,170,.65);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 3px;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+/* 오래된 책 느낌의 미세한 금박 장식 */
+.spine-book:nth-child(4n)::marker { display: none; }
+
+.spine-book:nth-child(5n)::before {
+  box-shadow: 0 4px 0 rgba(221,188,112,.18);
+}
+
+.spine-book:nth-child(7n)::after {
+  box-shadow: 0 -4px 0 rgba(221,188,112,.14);
+}
+
+.bookshelf-item-hidden { display: none !important; }
+
+@media (max-width: 700px) {
+  .bookshelf-wall {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .library-grid.cover-mode .shelf-row {
+    gap: 7px;
+  }
+
+  .cover-book {
+    width: 66px;
+    height: 145px;
+  }
+
+  .library-grid.spine-mode .shelf-row {
+    min-height: 165px;
+  }
+
+  .spine-book {
+    height: var(--book-height, 140px);
+  }
+}
+
+
+/* =========================================================
+   ATHENAEUM :: MAP + DARK ACADEMIA LIBRARY
+   ========================================================= */
+
+.map-heading {
+  text-align: center;
+  margin-bottom: 1.2rem;
+}
+
+.map-heading p {
+  color: var(--text-muted);
+  margin: .2rem 0 0;
+}
+
+.vintage-map {
+  position: relative;
+  height: 560px;
+  overflow: hidden;
+  border: 1px solid #675033;
+  background: #b19a70;
+  box-shadow:
+    inset 0 0 80px rgba(45,27,10,.45),
+    0 18px 40px rgba(0,0,0,.55);
+  background-image:
+    radial-gradient(circle at 20% 25%,rgba(255,245,210,.25),transparent 30%),
+    linear-gradient(125deg,#b5a078,#8f7954 55%,#bba47a);
+}
+
+.map-grid {
+  position: absolute;
+  inset: 0;
+  opacity: .22;
+  background-image:
+    linear-gradient(90deg,rgba(70,48,27,.5) 1px,transparent 1px),
+    linear-gradient(rgba(70,48,27,.4) 1px,transparent 1px);
+  background-size: 58px 58px;
+  transform: rotate(-8deg) scale(1.2);
+}
+
+.map-road {
+  position: absolute;
+  height: 10px;
+  background: rgba(232,216,178,.62);
+  border-top: 2px solid rgba(75,52,28,.45);
+  border-bottom: 2px solid rgba(75,52,28,.25);
+  box-shadow: 0 2px 3px rgba(50,30,10,.22);
+}
+
+.road-a {
+  width: 120%;
+  left: -10%;
+  top: 42%;
+  transform: rotate(-17deg);
+}
+
+.road-b {
+  width: 110%;
+  left: -4%;
+  top: 62%;
+  transform: rotate(12deg);
+}
+
+.road-c {
+  width: 75%;
+  left: 13%;
+  top: 25%;
+  transform: rotate(58deg);
+}
+
+.map-compass {
+  position: absolute;
+  right: 28px;
+  top: 24px;
+  text-align: center;
+  font: 600 1rem/1.2 'Cormorant Garamond',serif;
+  color: #46331e;
+}
+
+.map-compass span {
+  font-size: 2rem;
+}
+
+.map-location {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 155px;
+  padding: 12px 16px;
+  background: rgba(48,34,21,.92);
+  border: 1px solid #d3b878;
+  color: #ead9ad;
+  box-shadow: 0 8px 18px rgba(38,23,10,.4);
+  cursor: pointer;
+  transition: .25s;
+  z-index: 3;
+}
+
+.map-location:hover:not(:disabled) {
+  transform: translateY(-5px);
+  box-shadow: 0 13px 25px rgba(38,23,10,.55);
+  background: #3b2919;
+}
+
+.map-location strong {
+  font: 600 1rem 'Cormorant Garamond',serif;
+  letter-spacing: .08em;
+}
+
+.map-location small {
+  font-size: .62rem;
+  color: #bcae8f;
+  margin-top: 3px;
+}
+
+.location-pin {
+  font-size: 1.25rem;
+  color: #d9b86d;
+  margin-bottom: 3px;
+}
+
+.home-location {
+  left: 12%;
+  top: 18%;
+}
+
+.library-location {
+  left: 42%;
+  top: 46%;
+  transform: rotate(-1deg);
+}
+
+.cafe-location {
+  right: 9%;
+  bottom: 15%;
+  opacity: .65;
+  cursor: not-allowed;
+}
+
+.map-legend {
+  text-align: center;
+  color: #8f7b59;
+  font-size: .8rem;
+  margin-top: 1rem;
+}
+
+.map-legend span {
+  color: #c5a059;
+}
+
+.map-actions {
+  text-align: center;
+  margin-top: 1.2rem;
+}
+
+.library-room-card {
+  background:
+    radial-gradient(circle at 50% 18%,#2b251e 0,#171411 48%,#0c0a08 100%);
+  min-height: 700px;
+}
+
+.library-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid rgba(197,160,89,.18);
+  padding-bottom: 1rem;
+}
+
+.library-header p {
+  color: #8d8273;
+  margin: .2rem 0;
+}
+
+.library-eyebrow {
+  font-size: .62rem;
+  letter-spacing: .25em;
+  color: #9c8250;
+  margin-bottom: .35rem;
+}
+
+.library-reading-panel,
+.library-active-reading {
+  max-width: 650px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border: 1px solid rgba(197,160,89,.24);
+  background:
+    linear-gradient(145deg,rgba(41,34,27,.9),rgba(14,12,10,.96));
+  box-shadow:
+    inset 0 0 35px rgba(0,0,0,.55),
+    0 15px 30px rgba(0,0,0,.4);
+  text-align: center;
+}
+
+.library-lamp,
+.reading-candle {
+  font-size: 1.7rem;
+  color: #c5a059;
+}
+
+.library-reading-panel h3,
+.library-active-reading h3 {
+  font: 600 1.55rem 'Cormorant Garamond','Noto Sans KR',serif;
+  color: #dfc78f;
+  margin: .6rem 0;
+}
+
+.library-reading-panel p,
+.library-active-reading p {
+  color: #928678;
+  font-size: .85rem;
+}
+
+.library-form-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 1rem;
+  text-align: left;
+  margin-top: 1.5rem;
+}
+
+.library-choice-row {
+  display: flex;
+  justify-content: center;
+  gap: .8rem;
+  margin-top: 1.4rem;
+}
+
+.library-search-panel {
+  margin-top: 1.4rem;
+  text-align: left;
+}
+
+.library-search-results {
+  margin-top: .5rem;
+  max-height: 230px;
+  overflow: auto;
+  border: 1px solid #403326;
+}
+
+.library-search-result {
+  display: flex;
+  gap: .8rem;
+  width: 100%;
+  padding: .65rem;
+  border: 0;
+  border-bottom: 1px solid #342a20;
+  background: #17130f;
+  color: #ddd;
+  cursor: pointer;
+  text-align: left;
+}
+
+.library-search-result:hover {
+  background: #272018;
+}
+
+.library-search-result img,
+.library-result-no-cover {
+  width: 40px;
+  height: 58px;
+  object-fit: cover;
+  flex: 0 0 40px;
+  background: #30261c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.library-search-result span {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.library-search-result small {
+  color: #958777;
+}
+
+.library-search-loading,
+.library-search-empty {
+  padding: 1rem;
+  text-align: center;
+  color: #c5a059;
+}
+
+.library-active-label {
+  font-size: .65rem;
+  letter-spacing: .3em;
+  color: #a98a51;
+  margin-top: .7rem;
+}
+
+.library-timer {
+  font: 600 4rem 'Cormorant Garamond',serif;
+  letter-spacing: .08em;
+  color: #e1c98d;
+  margin: 1.4rem 0;
+  text-shadow: 0 2px 15px rgba(197,160,89,.12);
+}
+
+.library-reading-meta {
+  display: flex;
+  justify-content: center;
+  gap: .7rem;
+  color: #887b6c;
+  font-size: .75rem;
+}
+
+.library-stop-btn {
+  margin-top: 1.7rem;
+}
+
+.library-statistics {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 1rem;
+  max-width: 800px;
+  margin: 2rem auto 0;
+}
+
+.library-stat {
+  padding: 1.2rem;
+  background: rgba(9,8,7,.7);
+  border: 1px solid rgba(197,160,89,.16);
+  text-align: center;
+}
+
+.library-stat span {
+  display: block;
+  color: #827566;
+  font-size: .72rem;
+  letter-spacing: .06em;
+}
+
+.library-stat strong {
+  display: block;
+  color: #d1b777;
+  font: 600 1.15rem 'Cormorant Garamond','Noto Sans KR',serif;
+  margin-top: .45rem;
+}
+
+.library-footer-note {
+  text-align: center;
+  color: #62584d;
+  font: italic .8rem 'Cormorant Garamond',serif;
+  margin-top: 2rem;
+}
+
+.reading-time-summary {
+  margin-top: 1rem;
+  padding: .8rem;
+  border-top: 1px solid rgba(197,160,89,.14);
+  color: #8e8172;
+  font-size: .8rem;
+  text-align: center;
+}
+
+.reading-time-summary strong {
+  color: #c9ad6d;
+  margin-left: .35rem;
+}
+
+@media(max-width:700px) {
+  .vintage-map {
+    height: 430px;
+  }
+
+  .map-location {
+    min-width: 110px;
+    padding: 9px;
+  }
+
+  .map-location strong {
+    font-size: .78rem;
+  }
+
+  .map-location small {
+    font-size: .5rem;
+  }
+
+  .library-form-grid,
+  .library-statistics {
+    grid-template-columns: 1fr;
+  }
+
+  .library-choice-row {
+    flex-direction: column;
+  }
+
+  .library-timer {
+    font-size: 2.6rem;
+  }
+
+  .library-header {
+    gap: 1rem;
+  }
+
+  .library-header .archival-btn {
+    padding: .5rem .7rem;
+  }
+}
+
+/* =========================================================
+   ATHENAEUM :: ILLUSTRATED VINTAGE MAP
+   ========================================================= */
+
+.map-screen {
+  position: relative;
+  padding: 3rem 2.5rem 3.5rem;
+  min-height: 900px;
+  box-sizing: border-box;
+}
+
+.map-heading {
+  text-align: center;
+  margin-bottom: 1.7rem;
+  position: relative;
+  z-index: 5;
+}
+
+.map-eyebrow {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: .65rem;
+  letter-spacing: .42em;
+  color: #a88a55;
+  margin-bottom: .5rem;
+}
+
+.map-main-title {
+  margin: 0;
+  font-family: 'Cormorant Garamond', 'Noto Serif KR', serif;
+  font-size: 2.4rem;
+  font-weight: 500;
+  letter-spacing: .06em;
+  color: #d5bd8b;
+}
+
+.map-subtitle {
+  margin-top: .5rem;
+  font-family: 'Noto Serif KR', serif;
+  font-size: .82rem;
+  color: #8f8272;
+  letter-spacing: .04em;
+}
+
+
+/* ---------------------------------------------------------
+   MAP PAPER
+   --------------------------------------------------------- */
+
+.illustrated-map {
+  position: relative;
+  width: min(100%, 900px);
+  height: 650px;
+  margin: 0 auto;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      ellipse at 30% 20%,
+      rgba(255,248,220,.72),
+      transparent 32%
+    ),
+    radial-gradient(
+      ellipse at 80% 80%,
+      rgba(91,64,35,.16),
+      transparent 40%
+    ),
+    linear-gradient(
+      135deg,
+      #d9c89f 0%,
+      #c6b184 45%,
+      #d5c297 100%
+    );
+
+  border: 1px solid #7d6743;
+
+  box-shadow:
+    inset 0 0 70px rgba(67,43,21,.34),
+    inset 0 0 12px rgba(255,247,215,.55),
+    0 18px 45px rgba(0,0,0,.45);
+
+  filter: saturate(.72);
+}
+
+.illustrated-map::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(71,48,25,.025) 0,
+      rgba(71,48,25,.025) 1px,
+      transparent 1px,
+      transparent 4px
+    );
+
+  pointer-events: none;
+  z-index: 20;
+}
+
+.map-inner-border {
+  position: absolute;
+  inset: 13px;
+
+  border: 1px solid rgba(73,49,26,.65);
+
+  box-shadow:
+    inset 0 0 0 4px rgba(220,201,157,.22),
+    inset 0 0 0 5px rgba(79,55,30,.22);
+
+  pointer-events: none;
+  z-index: 21;
+}
+
+.map-inner-border::before,
+.map-inner-border::after {
+  content: "❦";
+  position: absolute;
+  color: rgba(78,53,29,.65);
+  font-size: 1.15rem;
+}
+
+.map-inner-border::before {
+  top: -10px;
+  left: -9px;
+}
+
+.map-inner-border::after {
+  right: -9px;
+  bottom: -10px;
+}
+
+
+/* ---------------------------------------------------------
+   RIVER
+   --------------------------------------------------------- */
+
+.map-river {
+  position: absolute;
+  width: 135%;
+  height: 145px;
+  left: -17%;
+  top: 45%;
+
+  background:
+    repeating-linear-gradient(
+      174deg,
+      transparent 0,
+      transparent 14px,
+      rgba(100,83,58,.13) 15px,
+      transparent 17px
+    ),
+    #9ca88d;
+
+  border-top: 3px solid rgba(75,62,43,.35);
+  border-bottom: 3px solid rgba(75,62,43,.25);
+
+  transform: rotate(-8deg);
+  box-shadow:
+    inset 0 18px 30px rgba(255,244,205,.18),
+    inset 0 -20px 35px rgba(50,40,28,.12);
+
+  opacity: .72;
+  z-index: 1;
+}
+
+.river-line {
+  position: absolute;
+  height: 1px;
+  background: rgba(66,57,41,.23);
+  transform: rotate(-8deg);
+  z-index: 2;
+}
+
+.river-line-1 {
+  width: 90%;
+  left: 2%;
+  top: 49%;
+}
+
+.river-line-2 {
+  width: 65%;
+  left: 20%;
+  top: 55%;
+}
+
+.river-line-3 {
+  width: 45%;
+  left: 42%;
+  top: 61%;
+}
+
+
+/* ---------------------------------------------------------
+   PATHS
+   --------------------------------------------------------- */
+
+.map-path {
+  position: absolute;
+  height: 7px;
+
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(93,70,43,.52) 0 7px,
+      transparent 7px 13px
+    );
+
+  border-radius: 50%;
+  transform-origin: center;
+  z-index: 4;
+  opacity: .78;
+}
+
+.path-1 {
+  width: 72%;
+  left: 15%;
+  top: 35%;
+  transform: rotate(18deg);
+}
+
+.path-2 {
+  width: 66%;
+  left: 13%;
+  top: 69%;
+  transform: rotate(-18deg);
+}
+
+.path-3 {
+  width: 58%;
+  left: 34%;
+  top: 30%;
+  transform: rotate(73deg);
+}
+
+.path-4 {
+  width: 45%;
+  left: 45%;
+  top: 57%;
+  transform: rotate(-67deg);
+}
+
+.path-5 {
+  width: 42%;
+  left: 3%;
+  top: 55%;
+  transform: rotate(43deg);
+}
+
+
+/* ---------------------------------------------------------
+   FOREST
+   --------------------------------------------------------- */
+
+.map-forest {
+  position: absolute;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px 4px;
+
+  color: rgba(60,67,43,.68);
+
+  font-family: Georgia, serif;
+  font-size: 1.4rem;
+  line-height: .8;
+
+  z-index: 3;
+  transform: rotate(-7deg);
+  opacity: .7;
+}
+
+.forest-1 {
+  left: 4%;
+  top: 10%;
+  width: 130px;
+}
+
+.forest-2 {
+  right: 5%;
+  top: 12%;
+  width: 120px;
+  transform: rotate(8deg);
+}
+
+.forest-3 {
+  left: 7%;
+  bottom: 10%;
+  width: 105px;
+  transform: rotate(4deg);
+}
+
+
+/* ---------------------------------------------------------
+   PLACE BUTTONS
+   --------------------------------------------------------- */
+
+.map-place {
+  position: absolute;
+  z-index: 10;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 142px;
+  min-height: 82px;
+  padding: 10px;
+
+  box-sizing: border-box;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(63,48,30,.96),
+      rgba(43,34,23,.96)
+    );
+
+  border: 1px solid #a88a55;
+
+  color: #dfcc9c;
+
+  box-shadow:
+    0 7px 15px rgba(49,34,19,.35),
+    inset 0 0 12px rgba(215,188,128,.08);
+
+  cursor: pointer;
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease,
+    background .25s ease;
+}
+
+.map-place:hover {
+  transform: translateY(-5px) scale(1.025);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(76,57,34,.98),
+      rgba(49,37,23,.98)
+    );
+
+  box-shadow:
+    0 13px 25px rgba(40,27,14,.48),
+    0 0 0 1px rgba(214,184,119,.18);
+}
+
+.map-place:active {
+  transform: translateY(-2px) scale(1.01);
+}
+
+.place-symbol {
+  font-family: Georgia, serif;
+  font-size: 1.5rem;
+  color: #c9a967;
+  margin-bottom: 3px;
+}
+
+.place-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  letter-spacing: .15em;
+}
+
+.place-desc {
+  margin-top: 3px;
+  font-family: 'Noto Serif KR', serif;
+  font-size: .56rem;
+  color: #a99a7d;
+  letter-spacing: .02em;
+}
+
+
+/* HOME */
+
+.map-place-home {
+  left: 9%;
+  top: 26%;
+}
+
+
+/* LIBRARY */
+
+.map-place-library {
+  left: 43%;
+  top: 37%;
+
+  width: 170px;
+  min-height: 100px;
+
+  border-color: #b99a5e;
+
+  box-shadow:
+    0 9px 20px rgba(42,28,14,.45),
+    0 0 0 3px rgba(175,143,82,.10);
+}
+
+.map-place-library::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+
+  border: 1px solid rgba(205,174,111,.18);
+
+  pointer-events: none;
+}
+
+
+/* CAFE */
+
+.map-place-cafe {
+  right: 7%;
+  bottom: 17%;
+}
+
+.map-place-cafe .place-symbol {
+  font-size: 1.2rem;
+}
+
+
+/* ---------------------------------------------------------
+   LANDMARKS
+   --------------------------------------------------------- */
+
+.map-landmark {
+  position: absolute;
+  z-index: 7;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  color: rgba(66,50,32,.82);
+
+  text-align: center;
+}
+
+.landmark-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.map-landmark strong {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: .76rem;
+  letter-spacing: .09em;
+}
+
+.map-landmark small {
+  font-family: 'Noto Serif KR', serif;
+  font-size: .5rem;
+  margin-top: 2px;
+  color: rgba(70,56,39,.65);
+}
+
+.landmark-archive {
+  left: 27%;
+  top: 16%;
+}
+
+.landmark-garden {
+  right: 18%;
+  top: 34%;
+}
+
+.landmark-observatory {
+  left: 27%;
+  bottom: 16%;
+}
+
+
+/* ---------------------------------------------------------
+   REGION LABELS
+   --------------------------------------------------------- */
+
+.map-region {
+  position: absolute;
+  z-index: 5;
+
+  font-family: 'Cormorant Garamond', serif;
+  font-size: .75rem;
+  letter-spacing: .2em;
+
+  color: rgba(71,52,31,.52);
+
+  white-space: nowrap;
+}
+
+.region-north {
+  left: 42%;
+  top: 7%;
+}
+
+.region-east {
+  right: 9%;
+  top: 49%;
+  transform: rotate(90deg);
+}
+
+.region-west {
+  left: 4%;
+  bottom: 31%;
+  transform: rotate(-18deg);
+}
+
+
+/* ---------------------------------------------------------
+   RIVER LABEL
+   --------------------------------------------------------- */
+
+.map-river-label {
+  position: absolute;
+  left: 38%;
+  top: 55%;
+
+  z-index: 6;
+
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: .78rem;
+  letter-spacing: .22em;
+
+  color: rgba(62,71,54,.62);
+
+  transform: rotate(-8deg);
+}
+
+
+/* ---------------------------------------------------------
+   NORTH / COMPASS
+   --------------------------------------------------------- */
+
+.map-north {
+  position: absolute;
+  right: 6%;
+  top: 6%;
+
+  z-index: 8;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  color: rgba(67,50,30,.68);
+
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.map-north span {
+  font-size: .8rem;
+  letter-spacing: .2em;
+}
+
+.map-north strong {
+  font-size: 1.7rem;
+  line-height: .8;
+}
+
+
+/* BIG COMPASS */
+
+.map-compass-large {
+  position: absolute;
+  right: 7%;
+  bottom: 6%;
+
+  width: 72px;
+  height: 72px;
+
+  z-index: 9;
+
+  border: 1px solid rgba(67,49,29,.55);
+  border-radius: 50%;
+
+  color: rgba(62,46,29,.68);
+
+  font-family: 'Cormorant Garamond', serif;
+  font-size: .55rem;
+
+  transform: rotate(4deg);
+}
+
+.map-compass-large::before,
+.map-compass-large::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+
+  background: rgba(69,51,31,.45);
+}
+
+.map-compass-large::before {
+  width: 1px;
+  height: 84%;
+}
+
+.map-compass-large::after {
+  width: 84%;
+  height: 1px;
+}
+
+.compass-n,
+.compass-e,
+.compass-s,
+.compass-w,
+.compass-star {
+  position: absolute;
+  z-index: 2;
+}
+
+.compass-n {
+  left: 50%;
+  top: 3px;
+  transform: translateX(-50%);
+}
+
+.compass-e {
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.compass-s {
+  left: 50%;
+  bottom: 3px;
+  transform: translateX(-50%);
+}
+
+.compass-w {
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.compass-star {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+}
+
+
+/* ---------------------------------------------------------
+   SMALL TREES
+   --------------------------------------------------------- */
+
+.tiny-trees {
+  position: absolute;
+
+  z-index: 4;
+
+  font-family: Georgia, serif;
+  font-size: 1rem;
+  letter-spacing: .4em;
+
+  color: rgba(58,65,43,.5);
+
+  white-space: nowrap;
+}
+
+.trees-1 {
+  left: 53%;
+  top: 16%;
+}
+
+.trees-2 {
+  left: 66%;
+  bottom: 18%;
+}
+
+.trees-3 {
+  left: 15%;
+  top: 73%;
+}
+
+.trees-4 {
+  right: 22%;
+  top: 70%;
+}
+
+
+/* ---------------------------------------------------------
+   MAP SCALE / NOTES
+   --------------------------------------------------------- */
+
+.map-scale {
+  position: absolute;
+  left: 50%;
+  bottom: 4%;
+
+  transform: translateX(-50%);
+
+  z-index: 10;
+
+  text-align: center;
+
+  font-family: 'Cormorant Garamond', serif;
+  font-size: .65rem;
+  letter-spacing: .18em;
+
+  color: rgba(69,51,31,.55);
+}
+
+.map-scale span {
+  display: block;
+  margin-top: 3px;
+  font-size: .48rem;
+  letter-spacing: .22em;
+}
+
+.map-corner-note {
+  position: absolute;
+  left: 5%;
+  bottom: 5%;
+
+  z-index: 8;
+
+  display: flex;
+  flex-direction: column;
+
+  color: rgba(70,51,30,.6);
+}
+
+.map-corner-note strong {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: .75rem;
+  letter-spacing: .14em;
+}
+
+.map-corner-note span {
+  font-family: 'Noto Serif KR', serif;
+  font-size: .5rem;
+  margin-top: 2px;
+}
+
+.map-bottom-note {
+  text-align: center;
+
+  margin: 1.2rem 0 1rem;
+
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+
+  font-size: .8rem;
+  letter-spacing: .08em;
+
+  color: #766957;
+}
+
+.map-bottom-note span {
+  color: #aa8951;
+  margin: 0 .5rem;
+}
+
+.map-home-return {
+  display: block;
+  margin: 0 auto;
+}
+
+
+/* ---------------------------------------------------------
+   RESPONSIVE
+   --------------------------------------------------------- */
+
+@media (max-width: 700px) {
+
+  .map-screen {
+    padding: 2rem 1rem 2.5rem;
+  }
+
+  .map-main-title {
+    font-size: 1.8rem;
+  }
+
+  .illustrated-map {
+    height: 520px;
+  }
+
+  .map-place {
+    width: 105px;
+    min-height: 70px;
+    padding: 7px;
+  }
+
+  .map-place-library {
+    width: 125px;
+    min-height: 82px;
+  }
+
+  .place-name {
+    font-size: .75rem;
+  }
+
+  .place-desc {
+    font-size: .45rem;
+  }
+
+  .map-forest {
+    transform: scale(.75);
+  }
+
+  .map-compass-large {
+    transform: scale(.8);
+  }
+
+  .landmark-archive {
+    left: 24%;
+  }
+
+  .landmark-garden {
+    right: 10%;
+  }
+
+  .landmark-observatory {
+    left: 23%;
+  }
+}
+/* 읽는 중인 책 입력 칸 한 줄 레이아웃 */
+.reading-settings-inline {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 0.6rem;
+  margin-top: 1.2rem;
+  text-align: left;
+}
+
+.reading-settings-inline .form-group label {
+  font-size: 0.78rem;
+  color: var(--text-muted, #8c8275);
+  margin-bottom: 0.3rem;
+  white-space: nowrap;
+}
+
+.reading-settings-inline input {
+  padding: 0.45rem 0.5rem;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* 모바일 환경 자동 대응 */
+@media (max-width: 650px) {
+  .reading-settings-inline {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+/* 제목 및 플러스(+) 버튼 레이아웃 */
+.reading-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.reading-header-flex .hero-title {
+  margin: 0;
+}
+
+.add-book-plus-btn {
+  background: var(--bg-deep-cabinet, #141414);
+  border: 1px solid var(--gold-muted, #6e6e6e);
+  color: var(--gold-accent, #c4c4c4);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.add-book-plus-btn:hover {
+  border-color: var(--gold-accent, #c4c4c4);
+  color: #ffffff;
+  background: #2b2b2b;
+  transform: scale(1.1);
+}
+
+/* 새 책 검색 패널 (플러스 클릭 시 토글) */
+.reading-add-panel {
+  margin-bottom: 1.8rem;
+  padding: 1.2rem;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px dashed var(--parchment-border, #424242);
+  border-radius: 4px;
+}
+
+/* 입력란 간격 및 여백 확대 */
+.reading-settings-inline {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr 1fr;
+  gap: 1rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.reading-settings-inline .form-group label {
+  font-size: 0.82rem;
+  color: var(--text-muted, #8c8275);
+  margin-bottom: 0.5rem;
+  white-space: nowrap;
+}
+
+.reading-settings-inline input {
+  padding: 0.6rem 0.6rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* 진행률 바 수직 간격 확대 */
+.reading-progress-preview {
+  margin-top: 1.8rem;
+  margin-bottom: 1.8rem;
+}
+
+.reading-progress-topline {
+  margin-bottom: 0.6rem;
+}
+
+/* 누적 시간 및 저장 버튼 여백 확대 */
+.reading-current-time-note {
+  margin-top: 1.5rem;
+  margin-bottom: 2.2rem;
+  font-size: 0.95rem;
+}
+
+.save-log-btn {
+  margin-top: 1rem;
+  padding: 0.9rem 1.8rem;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+}
+
+@media (max-width: 650px) {
+  .reading-settings-inline {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem 0.8rem;
+  }
+}
+/* 상단 헤더 및 버튼 배치 (상대 위치) */
+.reading-header-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+}
+
+.reading-header-container .hero-title {
+  margin: 0;
+}
+
+/* '+ 새로운 책 추가하기' 우측 정렬 버튼 */
+.add-book-text-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(20, 20, 20, 0.6);
+  border: 1px solid var(--gold-muted, #6e6e6e);
+  color: var(--gold-accent, #c4c4c4);
+  padding: 0.45rem 0.85rem;
+  font-size: 0.82rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.add-book-text-btn:hover {
+  border-color: var(--gold-accent, #c4c4c4);
+  color: #ffffff;
+  background: rgba(45, 45, 45, 0.9);
+}
+
+/* 기록할 책 선택 드롭다운 디자인 */
+.reading-select-group {
+  margin-top: 1.5rem;
+  margin-bottom: 1.2rem;
+  text-align: left;
+}
+
+.reading-select-group label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-muted, #8c8275);
+  margin-bottom: 0.4rem;
+}
+
+/* 모바일 화면 반응형 대응 */
+@media (max-width: 650px) {
+  .reading-header-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .add-book-text-btn {
+    position: static;
+    transform: none;
+    margin-top: 0.5rem;
+  }
+}

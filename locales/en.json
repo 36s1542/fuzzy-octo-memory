@@ -1,0 +1,22 @@
+{
+  "pageTitle": "ATHENAEUM :: Archive of Solitary Thought",
+  "headerSubtitle": "Archive of Solitary Thought",
+  "heroTitle": "Where Sentences Rest in the Quiet Night",
+  "heroDesc": "Record your books in a study filled with old books.<br>Your lingering words become a candle illuminating someone else's night.",
+  "btnRecord": "Log a Book",
+  "btnExplore": "Wander Shared Library",
+  "formTitle": "Record a New Book",
+  "searchPlaceholder": "Enter book title or author...",
+  "btnSearch": "Search",
+  "noCover": "No Cover",
+  "inputTitle": "Book Title",
+  "inputAuthor": "Author",
+  "inputPublisher": "Publisher",
+  "labelRating": "Rating",
+  "labelVisibility": "Visibility",
+  "optionPublic": "Public Study",
+  "optionPrivate": "Private Study",
+  "inputMusic": "Background Music URL (YouTube / Spotify)",
+  "inputReview": "Record the thoughts and sentences this book left with you...",
+  "btnSave": "Save to Library"
+}
