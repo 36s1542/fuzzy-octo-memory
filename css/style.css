@@ -1,13 +1,22 @@
 :root {
-  --bg-dark-wood: #0d0d0d;
-  --bg-deep-cabinet: #141414;
-  --parchment-bg: #1a1a1a;
-  --parchment-border: #424242;
-  --gold-accent: #c4c4c4;
-  --gold-muted: #6e6e6e;
-  --text-parchment: #d4d4d4;
-  --text-muted: #8a8a8a;
-  --crimson-ink: #2a2a2a;
+  /* 배경: 차가운 검정 대신 미세하게 붉은기/황갈색이 도는 극어두운 목재 톤 */
+  --bg-dark-wood: #130f0c;      /* 깊은 밤나무/호두나무 가구 색상 */
+  --bg-deep-cabinet: #1a1512;    /* 서가 내부/캐비닛 어두운 음영 */
+
+  /* 양파지/지면: 회색 대신 빛바랜 종이의 묵직한 다크 톤 */
+  --parchment-bg: #221d18;       /* 앤틱 양장본 종이의 어두운 질감 */
+  --parchment-border: #3d342c;   /* 오래된 책 테두리/은은한 브라운 테두리 */
+
+  /* 골드: 원색 노랑이 아닌, 톤다운된 은은한 고서 금박 색상 */
+  --gold-accent: #c29b38;       /* 클래식 고서의 빛바랜 금박 액센트 */
+  --gold-muted: #7d672f;        /* 톤다운된 뮤트 골드 / 서브 강조 */
+
+  /* 텍스트: 완전한 흰색이 아닌 약간의 샌드/크림 빛이 도는 부드러운 텍스트 */
+  --text-parchment: #d9cfb0;    /* 오래된 양파지 위 인쇄 텍스트 (눈이 편안함) */
+  --text-muted: #8c8273;        /* 부드러운 차콜 샌드 색상 */
+
+  /* 잉크/포인트: 단순 회색 대신 딥 버건디/크림슨 잉크 톤 */
+  --crimson-ink: #6b2228;       /* 봉인 왁스/앤틱 붉은 잉크 레터링 */
   
   --font-title: 'Cormorant Garamond', 'Noto Sans KR', sans-serif;
   --font-body: 'Noto Sans KR', sans-serif;
