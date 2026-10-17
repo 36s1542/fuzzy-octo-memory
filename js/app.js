@@ -19,12 +19,15 @@ import {
   getFirestore,
   collection,
   addDoc,
+  setDoc,
   getDocs,
   query,
   where,
   doc,
   deleteDoc,
-  updateDoc
+  updateDoc,
+  onSnapshot,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // ---------------------------------------------------------
@@ -118,7 +121,7 @@ function toHttps(url) {
 // 화면 전환
 // ---------------------------------------------------------
 function showView(viewName) {
-  const views = ['hero', 'reading', 'form', 'explore', 'map', 'library'];
+  const views = ['hero', 'reading', 'form', 'explore', 'map', 'library', 'home', 'cafe'];
 
   views.forEach(view => {
     const element = document.getElementById(`view-${view}`);
@@ -405,6 +408,7 @@ async function fetchGoogleBooks(queryText) {
             )
           )?.identifier || '',
 
+          ...physicalBookFields(info),
           source: 'Google Books'
         };
       })
@@ -1227,193 +1231,134 @@ async function extractDominantColor(imageUrl) {
 }
 
 // ---------------------------------------------------------
-// 책 크기 추정
+// 판형이 있으면 실제 치수 우선. 없으면 표지 비율/쪽수 기반 추정.
+// 표지 비율만으로 실제 높이를 알 수 없으므로 추정임을 명시한다.
 // ---------------------------------------------------------
-// 실제 판본의 물리적 가로/세로 크기를 API만으로 정확히 알 수는 없다.
-// 대신 pageCount를 기준으로 '두께'를 현실적인 범위에서 차등 적용한다.
-// pageCount가 없는 책은 중간 크기로 처리한다.
-function estimateBookDimensions(book) {
-  const pages =
-    Number(
-      book.totalPages ||
-      book.pageCount ||
-      0
-    );
+const bookCoverRatios = new Map();
+const bookCoverRequests = new Map();
+const bookCoverFinished = new Set();
+const shelfLayouts = new WeakMap();
 
-  let height;
-  let width;
+function measureLengthMm(value) {
+  if (typeof value === 'number') return Number.isFinite(value) && value > 0 ? value : 0;
+  const text = String(value || '').trim().toLowerCase();
+  const match = text.match(/^(\d+(?:\.\d+)?)\s*(mm|cm|inches|inch|in|["″])?$/);
+  if (!match) return 0;
+  const n = Number(match[1]);
+  return n * (match[2] === 'cm' ? 10 : /^(inches|inch|in|["″])$/.test(match[2] || '') ? 25.4 : 1);
+}
 
-  if (pages > 0) {
-    height =
-      Math.max(
-        132,
-        Math.min(
-          178,
-          140 +
-            Math.sqrt(pages) *
-              1.45
-        )
-      );
-
-    width =
-      Math.max(
-        26,
-        Math.min(
-          52,
-          25 +
-            Math.sqrt(pages) *
-              1.05
-        )
-      );
-
-  } else {
-    height = 151;
-    width = 34;
-  }
-
-  // 아주 약간의 판본 차이를 표현하되 완전 랜덤은 아니다.
-  const titleSeed =
-    normalizeTitle(
-      book.title
-    );
-
-  let seed = 0;
-
-  for (
-    let i = 0;
-    i < titleSeed.length;
-    i++
-  ) {
-    seed =
-      (
-        seed * 31 +
-        titleSeed.charCodeAt(i)
-      ) >>> 0;
-  }
-
-  const heightVariation =
-    (seed % 9) - 4;
-
-  const widthVariation =
-    ((seed >>> 3) % 7) - 3;
-
+function getPhysicalDimensions(book) {
+  const value = book.physicalDimensions || book.dimensions || {};
+  const google = book.volumeInfo?.dimensions || {};
   return {
-    height: Math.round(
-      Math.max(
-        128,
-        Math.min(
-          182,
-          height +
-            heightVariation
-        )
-      )
-    ),
-
-    width: Math.round(
-      Math.max(
-        24,
-        Math.min(
-          54,
-          width +
-            widthVariation
-        )
-      )
-    )
+    heightMm: measureLengthMm(book.heightMm || value.heightMm || value.height || google.height),
+    widthMm: measureLengthMm(book.widthMm || value.widthMm || value.width || google.width),
+    thicknessMm: measureLengthMm(book.thicknessMm || value.thicknessMm || value.thickness || google.thickness)
   };
+}
+
+function physicalBookFields(book) {
+  const d = getPhysicalDimensions(book || {});
+  return d.heightMm || d.widthMm || d.thicknessMm ? { physicalDimensions: d } : {};
+}
+
+function estimateBookDimensions(book) {
+  const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
+  const physical = getPhysicalDimensions(book);
+  const pages = Number(book.totalPages || book.pageCount || 0);
+  const ratio = bookCoverRatios.get(book.coverUrl);
+  // Same visual scale for every volume. Cover shape is only a fallback proxy.
+  const heightMm = physical.heightMm || (ratio ? clamp(145 * ratio, 155, 285) : 210);
+  const thicknessMm = physical.thicknessMm || (pages > 0 ? 3 + pages * 0.055 : 22);
+  return {
+    height: Math.round(clamp(heightMm * 0.84, 110, 250)),
+    width: Math.round(clamp(thicknessMm * 1.15, 13, 95)),
+    sizeDescription: [
+      physical.heightMm ? `높이 ${physical.heightMm}mm` : ratio ? '높이: 표지 비율 기반 추정' : '높이: 판형 정보 없음 · 기본값',
+      physical.thicknessMm ? `두께 ${physical.thicknessMm}mm` : pages > 0 ? `두께: ${pages}쪽 기준 추정` : '두께: 쪽수 정보 없음 · 기본값'
+    ].join(' / ')
+  };
+}
+
+function loadBookCoverRatio(url) {
+  if (!url || bookCoverRatios.has(url)) return Promise.resolve();
+  if (bookCoverRequests.has(url)) return bookCoverRequests.get(url);
+  const request = new Promise(resolve => {
+    const img = new Image();
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      img.onload = img.onerror = null;
+      bookCoverFinished.add(url);
+      resolve();
+    };
+    const timer = setTimeout(finish, 5000);
+    img.onload = () => {
+      if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+        const ratio = img.naturalHeight / img.naturalWidth;
+        if (ratio >= 0.6 && ratio <= 2.8) bookCoverRatios.set(url, ratio);
+      }
+      finish();
+    };
+    img.onerror = finish;
+    img.src = url;
+  });
+  bookCoverRequests.set(url, request);
+  return request;
+}
+
+function rememberShelfLayout(container, books, options) {
+  let state = shelfLayouts.get(container);
+  if (!state) {
+    state = { books, options, width: Math.round(container.clientWidth), frame: 0 };
+    shelfLayouts.set(container, state);
+    if (typeof ResizeObserver !== 'undefined') {
+      state.observer = new ResizeObserver(() => {
+        const width = Math.round(container.clientWidth);
+        if (!width || Math.abs(width - state.width) < 2) return;
+        state.width = width;
+        cancelAnimationFrame(state.frame);
+        state.frame = requestAnimationFrame(() => renderBookshelf(container, state.books, state.options));
+      });
+      state.observer.observe(container);
+    }
+  }
+  state.books = books;
+  state.options = options;
+  state.width = Math.round(container.clientWidth);
+  return state;
 }
 
 // ---------------------------------------------------------
 // 책 상세보기 (통합 모달)
 // ---------------------------------------------------------
+
 function openBookDetail(docId) {
   const book = loadedBooksMap[docId];
-  if (!book) return;
 
-  let detailModal = document.getElementById('book-detail-modal');
-
-  if (!detailModal) {
-    detailModal = document.createElement('div');
-    detailModal.id = 'book-detail-modal';
-    detailModal.className = 'modal-overlay';
-    document.body.appendChild(detailModal);
+  if (!book) {
+    alert('책 정보를 찾을 수 없습니다. 공유서재를 새로고침해 주세요.');
+    return;
   }
 
-  const reviewsList = (book.allReviews && book.allReviews.length > 0)
-    ? book.allReviews
-    : [{
-        userName: book.userName || '학자',
-        rating: book.rating || 5,
-        review: book.review || '등록된 감상평이 없습니다.',
-        musicUrl: book.musicUrl
-      }];
-
-  const reviewsHtml = reviewsList.map(item => `
-    <div class="public-review-card">
-      <div class="public-review-header">
-        <span class="review-user">👤 ${escapeHtml(item.userName)}</span>
-        <span class="review-rating">★ ${Number(item.rating).toFixed(1)}</span>
-      </div>
-      <div class="review-body">
-        ${escapeHtml(item.review)}
-      </div>
-      ${item.musicUrl ? `
-        <div class="review-music">
-          🎵 <a href="${escapeHtml(toHttps(item.musicUrl))}" target="_blank" rel="noopener noreferrer">함께 들은 음악 🔗</a>
-        </div>
-      ` : ''}
-    </div>
-  `).join('');
-
-  detailModal.innerHTML = `
-    <div class="modal-card book-detail-card group-detail-card">
-      <div class="book-detail-head">
-        <h3 class="modal-title">
-          📖 도서 기록 모아보기 ${book.reviewCount ? `(${book.reviewCount}명 참여)` : ''}
-        </h3>
-        <button type="button" class="close-btn" onclick="closeBookDetail()">&times;</button>
-      </div>
-
-      <div class="book-detail-main">
-        ${
-          book.coverUrl
-            ? `<img src="${escapeHtml(book.coverUrl)}" class="book-detail-cover" alt="표지">`
-            : `<div class="book-detail-cover no-detail-cover">표지 없음</div>`
-        }
-
-        <div class="book-detail-info">
-          <div class="book-detail-title">${escapeHtml(book.title)}</div>
-          <div class="book-detail-author">
-            ${escapeHtml(book.author || '저자 미상')} ${book.publisher ? `· ${escapeHtml(book.publisher)}` : ''}
-          </div>
-          <div class="book-detail-rating">
-            평균 ★ ${Number(book.rating || 5).toFixed(1)}
-          </div>
-        </div>
-      </div>
-
-      <div class="group-reviews-container">
-        <h4 class="reviews-section-title">🕯️ 이 책을 함께 읽은 사유의 기록들</h4>
-        <div class="reviews-list-scroll">
-          ${reviewsHtml}
-        </div>
-      </div>
-
-      <div style="margin-top:1.5rem; text-align:right;">
-        <button type="button" class="archival-btn" onclick="closeBookDetail()">닫기</button>
-      </div>
-    </div>
-  `;
-
-  detailModal.classList.remove('hidden');
+  // 별도의 상세 페이지로 이동하면서 책 ID 전달
+  window.location.href =
+    `book-detail.html?id=${encodeURIComponent(docId)}`;
 }
 
 function closeBookDetail() {
-  document
-    .getElementById(
-      'book-detail-modal'
-    )
-    ?.classList.add('hidden');
+  // 기존 팝업을 호출하는 코드와의 호환성을 위한 함수
+  const detailModal =
+    document.getElementById('book-detail-modal');
+
+  if (detailModal) {
+    detailModal.classList.add('hidden');
+  }
 }
+
 
 // ---------------------------------------------------------
 // Firebase 저장
@@ -1446,6 +1391,8 @@ async function saveBookToFirestore(
       {
         userId:
           currentUser.uid,
+
+        ...physicalBookFields(bookData),
 
         title:
           bookData.title,
@@ -1650,91 +1597,32 @@ function applyBookshelfMode() {
 // ---------------------------------------------------------
 // 책장 행 구성
 // ---------------------------------------------------------
-function buildRows(books) {
-  if (!books.length) {
-    return [];
-  }
-
-  if (
-    bookshelfView ===
-    'cover'
-  ) {
-    // 표지 보기에서는 실제 책장을 보는 느낌으로 한 선반에 5~6권
+function buildRows(books, container) {
+  if (!books.length) return [];
+  if (bookshelfView === 'cover') {
     const rows = [];
-
-    const perRow =
-      window.innerWidth <
-      700
-        ? 4
-        : 6;
-
-    for (
-      let i = 0;
-      i < books.length;
-      i += perRow
-    ) {
-      rows.push(
-        books.slice(
-          i,
-          i + perRow
-        )
-      );
-    }
-
+    // Exactly five slots per physical shelf; CSS never wraps inside a shelf.
+    for (let i = 0; i < books.length; i += 5) rows.push(books.slice(i, i + 5));
     return rows;
   }
-
-  // 책등 보기에서는 책의 예상 두께에 따라 한 줄을 채운다.
-  const availableWidth =
-    document.getElementById(
-      'my-book-list'
-    )?.clientWidth ||
-    document.getElementById(
-      'public-book-list'
-    )?.clientWidth ||
-    650;
-
-  const usableWidth =
-    Math.max(
-      260,
-      availableWidth - 40
-    );
-
+  const styles = getComputedStyle(container);
+  const side = parseFloat(styles.getPropertyValue('--shelf-side')) || 14;
+  const rail = parseFloat(styles.getPropertyValue('--shelf-rail')) || 6;
+  const usableWidth = Math.max(1, (container.clientWidth || 600) - 2 * (side + rail));
   const rows = [];
-  let row = [];
-  let used = 0;
-
-  books.forEach(
-    book => {
-      const dimensions =
-        estimateBookDimensions(
-          book.book
-        );
-
-      const bookWidth =
-        dimensions.width + 1;
-
-      if (
-        row.length &&
-        used + bookWidth >
-          usableWidth
-      ) {
-        rows.push(row);
-
-        row = [];
-        used = 0;
-      }
-
-      row.push(book);
-
-      used += bookWidth;
+  let row = [], used = 0;
+  for (const entry of books) {
+    const width = estimateBookDimensions(entry.book).width;
+    const nextWidth = used + (row.length ? 2 : 0) + width;
+    if (row.length && nextWidth > usableWidth) {
+      rows.push(row);
+      row = [];
+      used = 0;
     }
-  );
-
-  if (row.length) {
-    rows.push(row);
+    used += (row.length ? 2 : 0) + width;
+    row.push(entry);
   }
-
+  if (row.length) rows.push(row);
   return rows;
 }
 
@@ -1836,6 +1724,8 @@ function createBookElement(
           : ''
       }`;
 
+    wrapper.title += ` · ${dimensions.sizeDescription}`;
+
     wrapper.style.setProperty(
       '--book-width',
       `${dimensions.width}px`
@@ -1926,6 +1816,10 @@ async function renderBookshelf(
     options.emptyMessage ||
     '아직 서재에 꽂힌 책이 없습니다. 첫 번째 책을 기록해 보세요.';
 
+  const layout = rememberShelfLayout(container, books, options);
+  const renderToken = {};
+  layout.renderToken = renderToken;
+
   container.className =
     `library-grid shelf-library ${bookshelfView}-mode`;
 
@@ -1956,7 +1850,7 @@ async function renderBookshelf(
   }
 
   const rows =
-    buildRows(books);
+    buildRows(books, container);
 
   rows.forEach(
     (rowBooks, rowIndex) => {
@@ -2025,6 +1919,19 @@ async function renderBookshelf(
       );
     }
   );
+
+  // Fetch only image geometry. No database writes and no title-based random size.
+  if (bookshelfView === 'spine') {
+    const unknown = books.map(({ book }) => book.coverUrl)
+      .filter(url => url && !bookCoverRatios.has(url) && !bookCoverFinished.has(url));
+    if (unknown.length) {
+      Promise.allSettled([...new Set(unknown)].map(loadBookCoverRatio)).then(() => {
+        if (layout.renderToken === renderToken && bookshelfView === 'spine') {
+          renderBookshelf(container, books, options);
+        }
+      });
+    }
+  }
 
   // 오래된 데이터에 dominant color가 없으면 표지에서 계산해 화면에 즉시 반영한다.
   // 가능하면 Firestore에도 한 번 저장하여 다음 방문부터 바로 사용한다.
@@ -2224,56 +2131,63 @@ async function loadUserBooks() {
 // ---------------------------------------------------------
 // 책 삭제
 // ---------------------------------------------------------
-async function deleteBook(
-  docId
-) {
-  if (
-    !confirm(
-      '이 책을 서재에서 삭제하시겠습니까?'
-    )
-  ) {
+
+async function deleteBook(docId) {
+  if (!currentUser) {
+    alert("로그인 후 이용해 주세요.");
     return;
   }
 
   try {
-    await deleteDoc(
-      doc(
-        db,
-        'books',
-        docId
+    const bookRef = doc(db, "books", docId);
+    const bookSnapshot = await getDocs(
+      query(
+        collection(db, "books"),
+        where("__name__", "==", docId)
       )
     );
 
-    delete loadedBooksMap[
-      docId
-    ];
+    if (bookSnapshot.empty) {
+      alert("책 기록을 찾을 수 없습니다.");
+      return;
+    }
 
-    alert(
-      '서재에서 삭제되었습니다.'
-    );
+    const book = bookSnapshot.docs[0].data();
 
-    if (
-      currentTab ===
-      'my'
-    ) {
+    // 작성자 본인만 삭제 가능
+    const isOwner = book.userId === currentUser.uid;
+
+    // 관리자 권한은 실제 인증된 계정으로 확인해야 함
+    const isAdmin = currentUser.getIdTokenResult
+      ? (await currentUser.getIdTokenResult()).claims.admin === true
+      : false;
+
+    if (!isOwner && !isAdmin) {
+      alert("본인이 작성한 기록만 삭제할 수 있습니다.");
+      return;
+    }
+
+    if (!confirm("이 책 기록을 삭제하시겠습니까?")) {
+      return;
+    }
+
+    await deleteDoc(bookRef);
+
+    delete loadedBooksMap[docId];
+
+    alert("삭제되었습니다.");
+
+    if (currentTab === "my") {
       await loadUserBooks();
     } else {
       await loadPublicBooks();
     }
-
-  } catch (error) {
-    console.error(
-      '삭제 오류:',
-      error
-    );
-
-    alert(
-      `삭제 도중 오류가 발생했습니다: ${
-        error.message || error
-      }`
-    );
+} catch (error) {
+    console.error("삭제 오류:", error);
+    alert("삭제에 실패했습니다. 권한 설정을 확인해 주세요.");
   }
 }
+
 
 // ---------------------------------------------------------
 // 공유 서재
@@ -4691,6 +4605,7 @@ function initBookForm() {
         );
 
       const bookData = {
+        ...physicalBookFields(currentBookData || {}),
         title:
           document.getElementById(
             'book-title'
@@ -5015,6 +4930,7 @@ document.addEventListener(
     initBookshelfViewControls();
 
     initLibraryEvents();
+    initTodayReadingSearch();
         const mapLibraryButton =
       document.getElementById('map-library-button');
 
@@ -5027,17 +4943,16 @@ document.addEventListener(
       );
     }
 
-    const mapCafeButton =
-      document.getElementById('map-cafe-button');
+   
+const mapCafeButton =
+  document.getElementById('map-cafe-button');
 
-    if (mapCafeButton) {
-      mapCafeButton.addEventListener(
-        'click',
-        () => {
-          alert('카페는 아직 문을 열지 않았습니다.');
-        }
-      );
-    }
+if (mapCafeButton) {
+  mapCafeButton.addEventListener('click', () => {
+    window.openAthenaeumRoom('cafe');
+  });
+}
+
 
     const mapHomeButton =
       document.getElementById('map-home-button');
@@ -5046,7 +4961,7 @@ document.addEventListener(
       mapHomeButton.addEventListener(
         'click',
         () => {
-          showView('hero');
+          window.openAthenaeumRoom('home');
         }
       );
     }
@@ -5145,75 +5060,932 @@ async function executeTodayReadingSearch() {
 // 2. 검색에서 선택한 책 정보를 화면에 적용하는 함수
 
 async function applySelectedBookToTodayReading(book) {
+  if (!currentUser) {
+    openLoginModal();
+    return;
+  }
 
-  const select = document.getElementById('reading-book-select');
+  try {
+    // 이미 내 목록에 있는 책인지 확인 (제목 + 출판사)
+    let existing = readingBooksCache.find(b =>
+      normalizeTitle(b.title) === normalizeTitle(book.title) &&
+      normalizeTitle(b.publisher) === normalizeTitle(book.publisher)
+    );
 
-  const totalPagesInput = document.getElementById('reading-total-pages');
+    let bookId = existing?.id;
 
-  const startPageInput = document.getElementById('reading-start-page');
-
-  const currentPageInput = document.getElementById('reading-current-page');
-
-
-
-  const titleText = `${book.title}${book.publisher ? ` · ${book.publisher}` : ''}`;
-
-
-
-  if (select) {
-
-    // 드롭다운에 추가 또는 기존 항목 선택
-
-    let option = Array.from(select.options).find(opt => opt.textContent.trim() === titleText.trim());
-
-
-
-    if (!option) {
-
-      option = document.createElement('option');
-
-      option.value = `temp_${Date.now()}`;
-
-      option.textContent = titleText;
-
-      select.appendChild(option);
-
+    if (!bookId) {
+      const ref = await addDoc(collection(db, 'books'), {
+        userId: currentUser.uid,
+        title: book.title,
+        author: book.authors || '',
+        publisher: book.publisher || '',
+        coverUrl: book.coverUrl || '',
+        totalPages: Number(book.totalPages || 0),
+        ...physicalBookFields(book),
+        rating: 5,
+        visibility: 'private',
+        musicUrl: '',
+        review: '',
+        startDate: todayISO(),
+        endDate: '',
+        currentPage: 0,
+        readingStatus: true,
+        totalReadingSeconds: 0,
+        createdAt: new Date().toISOString()
+      });
+      bookId = ref.id;
     }
 
-    select.value = option.value;
+    // 목록을 다시 불러온 뒤 방금 책을 선택
+    await loadReadingBooks();
 
+    const select = document.getElementById('reading-book-select');
+    if (select) {
+      select.value = bookId;
+      // initReadingProgress의 change 핸들러가 페이지/날짜/진행률을 채워 줌
+      select.dispatchEvent(new Event('change'));
+    }
+
+    // 선택된 책 안내 영역
+    const selectedBox = document.getElementById('selected-reading-book');
+    if (selectedBox) {
+      selectedBox.classList.remove('empty');
+      selectedBox.innerHTML = `
+        <span class="selected-reading-book-mark">📖</span>
+        <div>
+          <strong>${escapeHtml(book.title)}</strong>
+          <p>${escapeHtml(book.authors || '저자 미상')}${
+            book.publisher ? ' · ' + escapeHtml(book.publisher) : ''
+          }</p>
+        </div>
+      `;
+    }
+  } catch (error) {
+    console.error('읽는 중인 책 등록 실패:', error);
+    alert(`책을 등록하지 못했습니다: ${error.message || error}`);
   }
-
-
-
-  // 페이지 수 자동 입력
-
-  if (totalPagesInput) totalPagesInput.value = Number(book.totalPages) || 0;
-
-  if (startPageInput && (!startPageInput.value || startPageInput.value === '0')) startPageInput.value = 1;
-
-  if (currentPageInput && !currentPageInput.value) currentPageInput.value = 0;
-
-
-
-  // 선택된 책 안내 영역 갱신
-
-  const selectedBox = document.getElementById('selected-reading-book');
-
-  if (selectedBox) {
-
-    selectedBox.classList.remove('empty');
-
-    selectedBox.innerHTML = `
-      <span class="selected-reading-book-mark">📖</span>
-      <div>
-        <strong>${escapeHtml(book.title)}</strong>
-        <p>${escapeHtml(book.authors || '저자 미상')} ${
-          book.publisher ? '· ' + escapeHtml(book.publisher) : ''
-        }</p>
-      </div>
-     `;
-
-  }
-
 }
+function initTodayReadingSearch() {
+  const input = document.getElementById('reading-book-search-input');
+  // 버튼 id는 HTML에 있는 것에 맞추세요 (아래 후보 중 존재하는 것을 사용)
+  const button =
+    document.getElementById('btn-reading-book-search') ||
+    document.getElementById('reading-book-search-button') ||
+    document.getElementById('btn-reading-search');
+
+  if (button && !button.dataset.bound) {
+    button.dataset.bound = 'true';
+    button.addEventListener('click', executeTodayReadingSearch);
+  }
+
+  if (input && !input.dataset.bound) {
+    input.dataset.bound = 'true';
+    input.addEventListener('keydown', event => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        executeTodayReadingSearch();
+      }
+    });
+  }
+}
+
+/* ==========================================
+   ATHENAEUM - HOME & CAFE 기능 추가
+   기존 app.js 코드 아래에 붙여넣기
+   ========================================== */
+
+(() => {
+  // 화면 전환 목록에 HOME과 CAFÉ를 추가해
+  // 기존 showView 함수를 안전하게 확장한다.
+  const originalShowView = window.showView;
+
+  if (typeof originalShowView === 'function') {
+    window.showView = function (viewName) {
+      originalShowView(viewName);
+
+      if (viewName === 'home' || viewName === 'cafe') {
+        document.querySelectorAll(
+          '#view-home, #view-cafe'
+        ).forEach((view) => {
+          view.classList.toggle(
+            'hidden',
+            view.id !== `view-${viewName}`
+          );
+        });
+      }
+    };
+  }
+
+  // 기존 화면 전환 함수가 참조하는 목록에
+  // 새 화면이 포함되지 않으므로 별도 전환 함수로 보완한다.
+  function openRoom(viewName) {
+    const allViews = [
+      'hero',
+      'reading',
+      'form',
+      'explore',
+      'map',
+      'library',
+      'home',
+      'cafe'
+    ];
+
+    allViews.forEach((name) => {
+      const element = document.getElementById(`view-${name}`);
+      if (element) {
+        element.classList.toggle('hidden', name !== viewName);
+      }
+    });
+
+    if (viewName === 'library' && typeof window.showView === 'function') {
+      window.showView('library');
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // 새 화면 안에서 메인 화면으로 돌아가는 버튼과
+  // 외부 메뉴에서 호출할 수 있도록 연결한다.
+  window.openAthenaeumRoom = openRoom;
+
+  // HOME/CAFÉ 집중 타이머
+  let selectedMinutes = 25;
+  let remainingSeconds = selectedMinutes * 60;
+  let timerInterval = null;
+  let isRunning = false;
+
+  const timerDisplays = [
+    document.getElementById('home-timer'),
+    document.getElementById('cafe-timer')
+  ];
+
+  const timerMessages = [
+    document.getElementById('home-timer-message'),
+    document.getElementById('cafe-timer-message')
+  ];
+
+  function renderTimer() {
+    const minutes = Math.floor(remainingSeconds / 60);
+    const seconds = remainingSeconds % 60;
+    const formatted =
+      `${String(minutes).padStart(2, '0')}:` +
+      `${String(seconds).padStart(2, '0')}`;
+
+    timerDisplays.forEach((display) => {
+      if (display) display.textContent = formatted;
+    });
+  }
+
+  function setMessage(message) {
+    timerMessages.forEach((element) => {
+      if (element) element.textContent = message;
+    });
+  }
+
+  function stopTimer() {
+    if (timerInterval !== null) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    isRunning = false;
+
+    document.querySelectorAll(
+      '#home-timer-start, #cafe-timer-start'
+    ).forEach((button) => {
+      button.textContent = '집중 시작';
+    });
+  }
+
+  function resetTimer() {
+    stopTimer();
+    remainingSeconds = selectedMinutes * 60;
+    renderTimer();
+    setMessage('새로운 집중 시간을 준비했어요.');
+  }
+
+  function startTimer() {
+    if (isRunning) {
+      stopTimer();
+      setMessage('잠시 멈췄어요. 준비되면 다시 시작해요.');
+      return;
+    }
+
+    if (remainingSeconds <= 0) {
+      remainingSeconds = selectedMinutes * 60;
+    }
+
+    isRunning = true;
+
+    document.querySelectorAll(
+      '#home-timer-start, #cafe-timer-start'
+    ).forEach((button) => {
+      button.textContent = '잠시 멈춤';
+    });
+
+    setMessage('좋아, 지금은 나에게 집중하는 시간이에요.');
+
+    timerInterval = setInterval(() => {
+      remainingSeconds -= 1;
+      renderTimer();
+
+      if (remainingSeconds <= 0) {
+        stopTimer();
+        remainingSeconds = 0;
+        renderTimer();
+        setMessage('집중 시간이 끝났어요. 수고했어요!');
+      }
+    }, 1000);
+  }
+
+  document.querySelectorAll('[data-focus-minutes]').forEach((button) => {
+    button.addEventListener('click', () => {
+      selectedMinutes = Number(button.dataset.focusMinutes);
+
+      document.querySelectorAll('[data-focus-minutes]').forEach((item) => {
+        item.classList.toggle(
+          'selected',
+          Number(item.dataset.focusMinutes) === selectedMinutes
+        );
+      });
+
+      resetTimer();
+    });
+  });
+
+  document.getElementById('home-timer-start')
+    ?.addEventListener('click', startTimer);
+
+  document.getElementById('cafe-timer-start')
+    ?.addEventListener('click', startTimer);
+
+  document.getElementById('home-timer-reset')
+    ?.addEventListener('click', resetTimer);
+
+  document.getElementById('cafe-timer-reset')
+    ?.addEventListener('click', resetTimer);
+
+})();
+
+// CAFE 음료 선택 및 공용 독서방 로직
+(() => {
+  const cafeView = document.getElementById('view-cafe');
+  if (!cafeView) return;
+
+  const menuPaper = cafeView.querySelector('.cafe-menu-paper');
+  if (!menuPaper) return;
+
+  // 기존 메뉴판 하단에 입장 버튼과 독서방이 없다면 동적으로 생성하거나 배치합니다.
+  // 여기서는 기존 요소를 활용하고 필요한 요소를 주입합니다.
+  let footerMsg = document.getElementById('cafe-drink-message');
+  if (footerMsg) {
+    footerMsg.onclick = null;
+    footerMsg.style.cursor = 'default';
+    footerMsg.title = '';
+  }
+
+  // 입장 버튼이 없다면 메뉴판 아래에 생성
+  let enterBtn = document.getElementById('cafe-enter-room');
+  if (!enterBtn && footerMsg) {
+    enterBtn = document.createElement('button');
+    enterBtn.id = 'cafe-enter-room';
+    enterBtn.type = 'button';
+    enterBtn.className = 'cafe-primary-button';
+    enterBtn.disabled = true;
+    enterBtn.textContent = '음료를 먼저 골라주세요';
+    footerMsg.after(enterBtn);
+  }
+
+  // 공용 독서방 영역이 없다면 메뉴판 아래에 생성
+  let sharedRoom = document.getElementById('cafe-shared-room');
+  if (!sharedRoom && menuPaper) {
+    sharedRoom = document.createElement('div');
+    sharedRoom.id = 'cafe-shared-room';
+    sharedRoom.className = 'cafe-shared-room hidden';
+    sharedRoom.innerHTML = `
+      <div class="cafe-shared-header">
+        <p class="cafe-eyebrow">READING TOGETHER</p>
+        <h2>함께 읽는 카페</h2>
+        <p>각자의 책을 펼치고, 같은 공간에서 함께 읽어요.</p>
+      </div>
+      <div class="cafe-my-seat">
+        <p id="cafe-my-drink"></p>
+        <h3>나의 독서 시간</h3>
+        <div id="cafe-shared-clock" class="cafe-shared-clock">00:00:00</div>
+        <p id="cafe-shared-status">준비되면 독서를 시작해 주세요.</p>
+        <div class="cafe-room-actions">
+          <button id="cafe-shared-toggle" class="cafe-primary-button" type="button">독서 시작</button>
+          <button id="cafe-shared-leave" class="cafe-secondary-button" type="button">독서방 나가기</button>
+        </div>
+      </div>
+      <section class="cafe-members-section">
+        <div class="cafe-members-heading">
+          <h3>함께 있는 사람들</h3>
+          <span id="cafe-member-count">연결 중</span>
+        </div>
+        <p id="cafe-room-notice"></p>
+        <div id="cafe-member-list" class="cafe-member-grid"></div>
+      </section>
+    `;
+    menuPaper.after(sharedRoom);
+  }
+
+  const myDrink = document.getElementById('cafe-my-drink');
+  const clock = document.getElementById('cafe-shared-clock');
+  const statusText = document.getElementById('cafe-shared-status');
+  const toggleButton = document.getElementById('cafe-shared-toggle');
+  const leaveButton = document.getElementById('cafe-shared-leave');
+  const memberCount = document.getElementById('cafe-member-count');
+  const memberList = document.getElementById('cafe-member-list');
+  const notice = document.getElementById('cafe-room-notice');
+
+  const dbInstance = window.db;
+  const authInstance = window.auth;
+
+  const drinks = {
+    americano: '아이스 아메리카노',
+    mocha: '카페모카',
+    greentea: '그린티 라떼',
+    cocoa: '핫초코',
+    strawberry: '딸기 라떼'
+  };
+
+  let selectedDrink = null;
+  let activeSession = null;
+  let entering = false;
+  let changingStatus = false;
+  let members = [];
+  let unsubscribeMembers = null;
+  let heartbeatTimer = null;
+  let displayTimer = null;
+
+  const HEARTBEAT_MS = 30 * 1000;
+  const STALE_MS = 2 * 60 * 1000;
+
+  function updateEntryButton() {
+    if (!enterBtn) return;
+    enterBtn.disabled = !selectedDrink || entering;
+    if (entering) {
+      enterBtn.textContent = '카페에 입장하는 중…';
+    } else if (!selectedDrink) {
+      enterBtn.textContent = '음료를 먼저 골라주세요';
+    } else if (!authInstance?.currentUser) {
+      enterBtn.textContent = '로그인하고 함께 읽기 →';
+    } else {
+      enterBtn.textContent = '함께 책 읽으러 가기 →';
+    }
+  }
+
+  function formatTime(ms) {
+    const total = Math.max(0, Math.floor(ms / 1000));
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
+    return [h, m, s].map(v => String(v).padStart(2, '0')).join(':');
+  }
+
+})();
+
+  // CAFE 음료 선택 및 공용 독서방 로직 (안전 장치 포함)
+(() => {
+  const cafeView = document.getElementById('view-cafe');
+  if (!cafeView) return;
+
+  const menuPaper = cafeView.querySelector('.cafe-menu-paper');
+  if (!menuPaper) return;
+
+  let footerMsg = document.getElementById('cafe-drink-message');
+  if (footerMsg) {
+    footerMsg.onclick = null;
+    footerMsg.style.cursor = 'default';
+    footerMsg.title = '';
+  }
+
+})();
+
+// CAFE 음료 선택 및 공용 독서방 로직
+(() => {
+  const cafeView = document.getElementById('view-cafe');
+  if (!cafeView) return;
+
+  const menuPaper = cafeView.querySelector('.cafe-menu-paper');
+  if (!menuPaper) return;
+
+  const footerMsg = document.getElementById('cafe-drink-message');
+  if (footerMsg) {
+    footerMsg.onclick = null;
+    footerMsg.style.cursor = 'default';
+    footerMsg.title = '';
+  }
+
+  // 입장 버튼이 HTML에 없으면 동적으로 생성
+  let enterBtn = document.getElementById('cafe-enter-room');
+  if (!enterBtn && footerMsg) {
+    enterBtn = document.createElement('button');
+    enterBtn.id = 'cafe-enter-room';
+    enterBtn.type = 'button';
+    enterBtn.className = 'cafe-primary-button';
+    footerMsg.after(enterBtn);
+  }
+
+  // 독서방이 HTML에 없으면 동적으로 생성
+  let sharedRoom = document.getElementById('cafe-shared-room');
+  if (!sharedRoom) {
+    sharedRoom = document.createElement('div');
+    sharedRoom.id = 'cafe-shared-room';
+    sharedRoom.className = 'cafe-shared-room hidden';
+    sharedRoom.innerHTML = `
+      <div class="cafe-shared-header">
+        <p class="cafe-eyebrow">READING TOGETHER</p>
+        <h2>함께 읽는 카페</h2>
+        <p>각자의 책을 펼치고, 같은 공간에서 함께 읽어요.</p>
+      </div>
+      <div class="cafe-my-seat">
+        <p id="cafe-my-drink"></p>
+        <h3>나의 독서 시간</h3>
+        <div id="cafe-shared-clock" class="cafe-shared-clock">00:00:00</div>
+        <p id="cafe-shared-status">준비되면 독서를 시작해 주세요.</p>
+        <div class="cafe-room-actions">
+          <button id="cafe-shared-toggle" class="cafe-primary-button" type="button">독서 시작</button>
+          <button id="cafe-shared-leave" class="cafe-secondary-button" type="button">독서방 나가기</button>
+        </div>
+      </div>
+      <section class="cafe-members-section">
+        <div class="cafe-members-heading">
+          <h3>함께 있는 사람들</h3>
+          <span id="cafe-member-count">연결 중</span>
+        </div>
+        <p id="cafe-room-notice"></p>
+        <div id="cafe-member-list" class="cafe-member-grid"></div>
+      </section>
+    `;
+    menuPaper.after(sharedRoom);
+  }
+
+  const myDrink = document.getElementById('cafe-my-drink');
+  const clock = document.getElementById('cafe-shared-clock');
+  const statusText = document.getElementById('cafe-shared-status');
+  const toggleButton = document.getElementById('cafe-shared-toggle');
+  const leaveButton = document.getElementById('cafe-shared-leave');
+  const memberCount = document.getElementById('cafe-member-count');
+  const memberList = document.getElementById('cafe-member-list');
+  const notice = document.getElementById('cafe-room-notice');
+
+  const dbInstance = window.db;
+  const authInstance = window.auth;
+
+  const drinks = {
+    americano: '아이스 아메리카노',
+    mocha: '카페모카',
+    greentea: '그린티 라떼',
+    cocoa: '핫초코',
+    strawberry: '딸기 라떼'
+  };
+
+  let selectedDrink = null;
+  let activeSession = null;
+  let entering = false;
+  let changingStatus = false;
+  let members = [];
+  let unsubscribeMembers = null;
+  let heartbeatTimer = null;
+  let displayTimer = null;
+
+  const HEARTBEAT_MS = 30 * 1000;
+  const STALE_MS = 2 * 60 * 1000;
+
+  function escapeHtml(str) {
+    return String(str ?? '').replace(/[&<>"']/g, (c) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+
+  function refreshButtonState() {
+    const btn = document.getElementById('cafe-enter-room');
+    if (!btn) return;
+
+    if (entering) {
+      btn.disabled = true;
+      btn.textContent = '카페에 입장하는 중…';
+    } else if (!selectedDrink) {
+      btn.disabled = true;
+      btn.textContent = '음료를 먼저 골라주세요';
+    } else {
+      btn.disabled = false;
+      btn.textContent = '함께 책 읽으러 가기 →';
+    }
+  }
+
+  function formatTime(ms) {
+    const total = Math.max(0, Math.floor(ms / 1000));
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
+    return [h, m, s].map((v) => String(v).padStart(2, '0')).join(':');
+  }
+
+  function resetRoomUi() {
+    if (clock) clock.textContent = '00:00:00';
+    if (statusText) statusText.textContent = '준비되면 독서를 시작해 주세요.';
+    if (toggleButton) toggleButton.textContent = '독서 시작';
+    if (notice) notice.textContent = '같은 취향의 독서가들과 함께해요.';
+    if (myDrink) myDrink.textContent = '오늘의 음료 · 선택 전';
+    if (memberCount) memberCount.textContent = '연결 중';
+    if (memberList) memberList.innerHTML = '';
+  }
+
+  function renderMembers() {
+    if (!memberList) return;
+    const now = Date.now();
+    const valid = members.filter(
+      (m) => m.updatedAt && now - m.updatedAt.toMillis() < STALE_MS
+    );
+
+    if (memberCount) memberCount.textContent = `${valid.length}명 접속 중`;
+
+    memberList.innerHTML = valid.map((m) => {
+      const isMe = activeSession && m.id === activeSession.id;
+      const add = (m.status === 'reading' && m.startedAt) ? now - m.startedAt.toMillis() : 0;
+      const total = (m.elapsedMs || 0) + add;
+      return `
+        <div class="cafe-member-card ${isMe ? 'is-me' : ''}">
+          <strong class="cafe-member-name">${escapeHtml(m.name)}${isMe ? ' (나)' : ''}</strong>
+          <p class="cafe-member-detail">${escapeHtml(drinks[m.drink] || '음료')}</p>
+          <p class="cafe-member-detail">${m.status === 'reading' ? '📖 독서 중' : '☕ 휴식 중'}</p>
+          <span class="cafe-member-time">${formatTime(total)}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // 음료 선택
+  cafeView.addEventListener('click', (e) => {
+    const drinkBtn = e.target.closest('[data-drink]');
+    if (!drinkBtn || entering || activeSession) return;
+
+    const drink = drinkBtn.dataset.drink;
+    if (!drinks[drink]) return;
+
+    selectedDrink = drink;
+
+    cafeView.querySelectorAll('[data-drink]').forEach((item) => {
+      item.classList.toggle('selected', item === drinkBtn);
+    });
+
+    if (footerMsg) {
+      footerMsg.textContent = `${drinks[drink]}를 골랐어요. 아래 버튼을 눌러 입장하세요!`;
+    }
+
+    refreshButtonState();
+  });
+
+  // 입장
+  document.addEventListener('click', async (e) => {
+    const targetBtn = e.target.closest('#cafe-enter-room');
+    if (!targetBtn || targetBtn.disabled || entering || activeSession) return;
+
+    const user = authInstance?.currentUser;
+    if (!user) {
+      if (footerMsg) footerMsg.textContent = '먼저 로그인한 뒤 입장해 주세요.';
+      document.getElementById('btn-login-modal')?.click();
+      return;
+    }
+
+    entering = true;
+    refreshButtonState();
+
+    try {
+      const sessionRef = doc(collection(dbInstance, 'cafeRooms', 'public', 'sessions'));
+      const session = {
+        id: sessionRef.id,
+        ref: sessionRef,
+        uid: user.uid,
+        status: 'paused',
+        elapsedMs: 0,
+        startedAtMs: 0,
+        drink: selectedDrink
+      };
+
+      await setDoc(sessionRef, {
+        uid: user.uid,
+        name: user.displayName || '독서가',
+        drink: selectedDrink,
+        status: 'paused',
+        elapsedMs: 0,
+        startedAt: null,
+        updatedAt: serverTimestamp()
+      });
+
+      activeSession = session;
+      resetRoomUi();
+      menuPaper.classList.add('hidden');
+      sharedRoom.classList.remove('hidden');
+
+      if (myDrink) myDrink.textContent = `오늘의 음료 · ${drinks[session.drink]}`;
+
+      unsubscribeMembers = onSnapshot(
+        collection(dbInstance, 'cafeRooms', 'public', 'sessions'),
+        (snapshot) => {
+          // 방금 쓴 serverTimestamp가 null로 보이지 않도록 estimate 사용
+          members = snapshot.docs.map((d) => ({
+            ...d.data({ serverTimestamps: 'estimate' }),
+            id: d.id
+          }));
+          renderMembers();
+        }
+      );
+
+      heartbeatTimer = setInterval(() => {
+        if (activeSession) {
+          updateDoc(activeSession.ref, { updatedAt: serverTimestamp() }).catch(() => {});
+        }
+      }, HEARTBEAT_MS);
+
+      displayTimer = setInterval(() => {
+        if (activeSession) {
+          const add = activeSession.status === 'reading'
+            ? Date.now() - activeSession.startedAtMs
+            : 0;
+          if (clock) clock.textContent = formatTime(activeSession.elapsedMs + add);
+        }
+        renderMembers();
+      }, 1000);
+
+    } catch (err) {
+      console.error(err);
+      if (footerMsg) {
+        footerMsg.textContent = `입장에 실패했습니다: ${err?.message || '알 수 없는 오류'}`;
+      }
+    } finally {
+      entering = false;
+      refreshButtonState();
+    }
+  });
+
+  // 독서 시작 / 잠시 쉬기
+  toggleButton?.addEventListener('click', async () => {
+    if (!activeSession || changingStatus) return;
+    changingStatus = true;
+
+    const isReading = activeSession.status === 'reading';
+    const add = isReading ? Date.now() - activeSession.startedAtMs : 0;
+    const nextElapsed = activeSession.elapsedMs + add;
+    const nextStatus = isReading ? 'paused' : 'reading';
+
+    try {
+      await updateDoc(activeSession.ref, {
+        status: nextStatus,
+        elapsedMs: nextElapsed,
+        startedAt: isReading ? null : serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+      activeSession.status = nextStatus;
+      activeSession.elapsedMs = nextElapsed;
+      activeSession.startedAtMs = isReading ? 0 : Date.now();
+
+      toggleButton.textContent = nextStatus === 'reading' ? '잠시 쉬기' : '이어서 읽기';
+      if (statusText) {
+        statusText.textContent = nextStatus === 'reading'
+          ? '지금 함께 책을 읽고 있어요.'
+          : '잠시 쉬는 중입니다.';
+      }
+    } catch (err) {
+      console.error(err);
+      if (statusText) {
+        statusText.textContent = `상태 변경에 실패했습니다: ${err?.message || '알 수 없는 오류'}`;
+      }
+    } finally {
+      changingStatus = false;
+    }
+  });
+
+  // 나가기
+  leaveButton?.addEventListener('click', async () => {
+    if (activeSession) {
+      await deleteDoc(activeSession.ref).catch(() => {});
+      if (unsubscribeMembers) unsubscribeMembers();
+      unsubscribeMembers = null;
+      clearInterval(heartbeatTimer);
+      clearInterval(displayTimer);
+      activeSession = null;
+    }
+    sharedRoom.classList.add('hidden');
+    menuPaper.classList.remove('hidden');
+    selectedDrink = null;
+    cafeView.querySelectorAll('[data-drink]').forEach((i) => i.classList.remove('selected'));
+    if (footerMsg) footerMsg.textContent = '오늘은 어떤 음료와 함께할까요?';
+    resetRoomUi();
+    refreshButtonState();
+  });
+
+  // 탭을 닫을 때 정리
+  window.addEventListener('beforeunload', () => {
+    if (activeSession) {
+      deleteDoc(activeSession.ref).catch(() => {});
+    }
+    if (unsubscribeMembers) unsubscribeMembers();
+    clearInterval(heartbeatTimer);
+    clearInterval(displayTimer);
+  });
+
+  resetRoomUi();
+  refreshButtonState();
+})();
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('libBookInput');
+  const submitBtn = document.getElementById('libSubmitBtn');
+  const board = document.getElementById('libBoard');
+
+  if (!board) return; // 도서관 화면이 아니면 실행 안 함
+
+  // 로컬 스토리지에서 기록 불러오기
+  let libraryRecords = JSON.parse(localStorage.getItem('athenaeum_library_records')) || [];
+
+  const renderRecords = () => {
+    board.innerHTML = '';
+    
+    if (libraryRecords.length === 0) {
+      board.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #61554a; font-style: italic;">아직 서재에 기록된 책이 없습니다. 첫 사색을 남겨보세요.</p>';
+      return;
+    }
+
+    libraryRecords.forEach((record, index) => {
+      const card = document.createElement('div');
+      card.className = 'lib-item-card';
+      card.innerHTML = `
+        <div class="lib-item-content">
+          <div class="lib-book-title">📖 "${record.title}"</div>
+          <div class="lib-user-name">- ${record.author}</div>
+        </div>
+        <button class="lib-delete-btn" onclick="window.removeLibRecord(${index})">지우기</button>
+      `;
+      board.appendChild(card);
+    });
+  };
+
+  // 등록 버튼 클릭 이벤트
+  submitBtn.addEventListener('click', () => {
+    const title = input.value.trim();
+    if (!title) {
+      alert('책 제목을 입력해 주세요.');
+      return;
+    }
+
+    // 로그인된 유저 이름이 있다면 사용, 없으면 '방문자'
+    const userName = (window.currentUser && window.currentUser.displayName) 
+      ? window.currentUser.displayName 
+      : '익명의 사색가';
+
+    libraryRecords.unshift({ title: title, author: userName }); // 최신글이 위로 오게
+    localStorage.setItem('athenaeum_library_records', JSON.stringify(libraryRecords));
+    
+    input.value = '';
+    renderRecords();
+  });
+
+  // 엔터키 입력 지원
+  input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      submitBtn.click();
+    }
+  });
+
+  // 전역 삭제 함수 연결
+  window.removeLibRecord = (index) => {
+    libraryRecords.splice(index, 1);
+    localStorage.setItem('athenaeum_library_records', JSON.stringify(libraryRecords));
+    renderRecords();
+  };
+
+  renderRecords();
+});
+// =========================================================
+// 도서관 실시간 공유 세션 (Firebase v10 Modular 방식 적용)
+// =========================================================
+document.addEventListener('DOMContentLoaded', () => {
+  const startBtn = document.getElementById('libStartBtn');
+  const stopBtn = document.getElementById('libStopBtn');
+  const bookInput = document.getElementById('libCurrentBookInput');
+  const timerDisplay = document.getElementById('libTimerDisplay');
+  const userGrid = document.getElementById('libActiveUsersGrid');
+
+  if (!startBtn || !userGrid) return;
+
+  let timerInterval = null;
+  let secondsElapsed = 0;
+  let currentSessionDocId = null;
+  let unsubscribeLibrary = null;
+
+  // 타이머 포맷 함수 (HH:MM:SS)
+  const formatTime = (totalSeconds) => {
+    const hrs = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+    const mins = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+    const secs = String(totalSeconds % 60).padStart(2, '0');
+    return `${hrs}:${mins}:${secs}`;
+  };
+
+  // 1. 독서 시작 및 Firestore에 실시간 세션 등록 (v10 방식)
+  startBtn.addEventListener('click', async () => {
+    const bookTitle = bookInput.value.trim();
+    if (!bookTitle) {
+      alert('지금 읽고 있는 책 제목을 입력해주세요.');
+      bookInput.focus();
+      return;
+    }
+
+    const user = currentUser || auth.currentUser;
+    if (!user) {
+      alert('로그인이 필요한 기능입니다.');
+      openLoginModal();
+      return;
+    }
+
+    try {
+      const sessionsRef = collection(db, 'libraryActiveSessions');
+      const docRef = await addDoc(sessionsRef, {
+        uid: user.uid,
+        userName: user.displayName || '사색가',
+        bookTitle: bookTitle,
+        startTime: serverTimestamp(),
+        duration: 0
+      });
+
+      currentSessionDocId = docRef.id;
+      bookInput.disabled = true;
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+
+      secondsElapsed = 0;
+      timerInterval = setInterval(() => {
+        secondsElapsed++;
+        if (timerDisplay) {
+          timerDisplay.textContent = formatTime(secondsElapsed);
+        }
+      }, 1000);
+
+    } catch (err) {
+      console.error('도서관 세션 시작 오류:', err);
+      alert('서버 연결에 실패했습니다.');
+    }
+  });
+
+  // 2. 기록 저장 및 퇴장 (v10 방식의 deleteDoc 사용)
+  stopBtn.addEventListener('click', async () => {
+    if (!currentSessionDocId) return;
+
+    clearInterval(timerInterval);
+
+    try {
+      const sessionDocRef = doc(db, 'libraryActiveSessions', currentSessionDocId);
+      await deleteDoc(sessionDocRef);
+
+      alert(`총 ${formatTime(secondsElapsed)} 동안 집중하셨습니다. 기록이 저장되었습니다.`);
+      
+      currentSessionDocId = null;
+      bookInput.disabled = false;
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+      if (timerDisplay) timerDisplay.textContent = '00:00:00';
+      bookInput.value = '';
+
+    } catch (err) {
+      console.error('세션 종료 오류:', err);
+      alert('세션 종료 중 오류가 발생했습니다.');
+    }
+  });
+
+  // 3. v10 실시간 리스너(onSnapshot)로 다른 사용자 현황 동기화
+  const sessionsCollectionRef = collection(db, 'libraryActiveSessions');
+  unsubscribeLibrary = onSnapshot(sessionsCollectionRef, (snapshot) => {
+    userGrid.innerHTML = '';
+
+    if (snapshot.empty) {
+      userGrid.innerHTML = '<p style="color: #61554a; font-style: italic; grid-column: 1/-1;">현재 서재에 홀로 사색 중인 사용자가 없습니다. 첫 테이프를 끊어보세요.</p>';
+      return;
+    }
+
+    snapshot.forEach((docSnap) => {
+      const data = docSnap.data();
+      const card = document.createElement('div');
+      card.className = 'library-user-card';
+      card.innerHTML = `
+        <div class="user-name">👤 ${escapeHtml(data.userName)}</div>
+        <div class="reading-book">📖 "${escapeHtml(data.bookTitle)}"</div>
+        <div class="session-time">집중하는 중...</div>
+      `;
+      userGrid.appendChild(card);
+    });
+  }, (error) => {
+    console.warn('Library stats 로드 실패:', error);
+  });
+
+  // 페이지 이탈 시 세션 정리
+  window.addEventListener('beforeunload', () => {
+    if (currentSessionDocId) {
+      deleteDoc(doc(db, 'libraryActiveSessions', currentSessionDocId)).catch(() => {});
+    }
+    if (unsubscribeLibrary) {
+      unsubscribeLibrary();
+    }
+  });
+});
