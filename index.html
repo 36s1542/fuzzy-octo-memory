@@ -247,6 +247,10 @@
         <button class="nav-item" onclick="showView('form')">책 기록</button>
         <span class="nav-divider">|</span>
         <button class="nav-item" onclick="showView('explore')">서재 거닐기</button>
+        <span class="nav-divider">|</span>
+<button class="nav-item" onclick="showView('map')">
+  책 읽으러가기
+</button>
 
         <span class="nav-separator">✦</span>
 
@@ -395,51 +399,8 @@
       </div>
     </div>
 
-    <div class="illustrated-map">
-
-      <!-- 장식 테두리 -->
-      <div class="map-inner-border"></div>
-
-      <!-- 강 -->
-      <div class="map-river"></div>
-
-      <!-- 강 안쪽 작은 물결 -->
-      <div class="river-line river-line-1"></div>
-      <div class="river-line river-line-2"></div>
-      <div class="river-line river-line-3"></div>
-
-      <!-- 길 -->
-      <div class="map-path path-1"></div>
-      <div class="map-path path-2"></div>
-      <div class="map-path path-3"></div>
-      <div class="map-path path-4"></div>
-      <div class="map-path path-5"></div>
-
-      <!-- 숲 -->
-      <div class="map-forest forest-1">
-        <span>♣</span><span>♣</span><span>♣</span>
-        <span>♣</span><span>♣</span><span>♣</span>
-        <span>♣</span><span>♣</span><span>♣</span>
-      </div>
-
-      <div class="map-forest forest-2">
-        <span>♣</span><span>♣</span><span>♣</span>
-        <span>♣</span><span>♣</span><span>♣</span>
-        <span>♣</span><span>♣</span>
-      </div>
-
-      <div class="map-forest forest-3">
-        <span>♣</span><span>♣</span><span>♣</span>
-        <span>♣</span><span>♣</span><span>♣</span>
-      </div>
-
-      <!-- 북쪽 -->
-      <div class="map-north">
-        <span>N</span>
-        <strong>✦</strong>
-      </div>
-
-      <!-- HOME -->
+    <div class="illustrated-map" role="group" aria-label="독서 마을 지도. 집, 도서관, 카페를 선택하세요.">
+      <div class="map-cartouche" aria-hidden="true"><span>THE ATHENAEUM</span><strong>Quiet Places</strong><small>A reader’s atlas</small></div>
       <button
         type="button"
         class="map-place map-place-home"
@@ -451,8 +412,7 @@
 
       </button>
 
-      <!-- LIBRARY -->
-      <button
+  <button
         type="button"
         class="map-place map-place-library"
         id="map-library-button">
@@ -463,83 +423,16 @@
 
       </button>
 
-      <!-- CAFE -->
-      <button
-        type="button"
-        class="map-place map-place-cafe"
-        id="map-cafe-button">
+  <button
+  type="button"
+  class="map-place map-place-cafe"
+  id="map-cafe-button">
 
-        <span class="place-symbol">☕</span>
-        <span class="place-name">CAFÉ</span>
-        <span class="place-desc">Lantern Café</span>
+  <span class="place-symbol">☕</span>
+  <span class="place-name">CAFÉ</span>
+  <span class="place-desc">Lantern Café</span>
 
-      </button>
-
-      <!-- ARCHIVE -->
-      <div class="map-landmark landmark-archive">
-        <span class="landmark-icon">▥</span>
-        <strong>THE ARCHIVE</strong>
-        <small>Forgotten Records</small>
-      </div>
-
-      <!-- GARDEN -->
-      <div class="map-landmark landmark-garden">
-        <span class="landmark-icon">✿</span>
-        <strong>MOON GARDEN</strong>
-        <small>A Garden of Silence</small>
-      </div>
-
-      <!-- OBSERVATORY -->
-      <div class="map-landmark landmark-observatory">
-        <span class="landmark-icon">⌾</span>
-        <strong>OBSERVATORY</strong>
-        <small>Under the Stars</small>
-      </div>
-
-      <!-- RIVER WALK -->
-      <div class="map-river-label">
-        RIVER WALK
-      </div>
-
-      <!-- 오래된 지도 지명 -->
-      <div class="map-region region-north">
-        OLD TOWN
-      </div>
-
-      <div class="map-region region-east">
-        LANTERN STREET
-      </div>
-
-      <div class="map-region region-west">
-        WHISPERING WOODS
-      </div>
-
-      <!-- 작은 나무들 -->
-      <div class="tiny-trees trees-1">♣ ♣ ♣ ♣</div>
-      <div class="tiny-trees trees-2">♣ ♣ ♣</div>
-      <div class="tiny-trees trees-3">♣ ♣ ♣ ♣ ♣</div>
-      <div class="tiny-trees trees-4">♣ ♣ ♣</div>
-
-      <!-- 지도 장식 -->
-      <div class="map-compass-large">
-        <div class="compass-n">N</div>
-        <div class="compass-star">✦</div>
-        <div class="compass-e">E</div>
-        <div class="compass-s">S</div>
-        <div class="compass-w">W</div>
-      </div>
-
-      <div class="map-scale">
-        ───── ✦ ─────
-        <span>ONE QUIET MILE</span>
-      </div>
-
-      <div class="map-corner-note">
-        <strong>HERE BEGIN</strong>
-        <span>the roads of thought</span>
-      </div>
-
-    </div>
+</button>
 
     <div class="map-bottom-note">
       <span>✦</span>
@@ -561,165 +454,73 @@
 
 </section>
 
+  <!---태연아,,,난 현재 도서관을 고치고 잇어...
+사진을 넣고 있는데 세로를 늘리니까 가로가 부족하고 가로를 늘리니까 사진이 바뀌고
+사진 똑바로 하니까 화면이 확대되고 화면을 줄이니까 사진이 반토막 나네,,, 진짜 신기하다--->
+
 <!-- 화면 2.6: 도서관 -->
     <!-- 화면 2.6: 도서관 -->
-    <section id="view-library" class="parchment-card hidden">
-      <div class="card-border-inner hero-center library-room-view">
-        <span class="ornament top-left">❦</span>
-        <span class="ornament top-right">❦</span>
-        <div class="library-room-heading">
-          <span class="library-kicker">THE OLD ATHENAEUM</span>
-          <h2 class="hero-title">도서관</h2>
-          <div class="separator">───── 🕯️ ─────</div>
-          <p>낮은 촛불 아래, 잠시 세상의 소음을 내려놓고 책을 읽습니다.</p>
-        </div>
+     <section id="view-library" class="view">
 
-        <div class="library-reading-panel">
-          <div class="library-panel-heading">
-            <div><span class="library-panel-kicker">QUIET READING ROOM</span><h3>독서 기록</h3></div>
-            <span id="library-session-status" class="library-session-status">대기 중</span>
-          </div>
+  <div class="dark-library-container" style="background: rgba(20, 18, 17, 0.6) !important; border: 2px solid #3d3632 !important; border-radius: 4px; max-width: 900px; margin: 30px auto; padding: 40px; color: #b8b0a8; font-family: 'Cormorant Garamond', serif; box-shadow: 0 20px 40px rgba(0,0,0,0.9); backdrop-filter: blur(3px);">
 
-          <div id="library-start-form">
-            <div class="library-book-choice-grid">
-              <div class="form-group">
-                <label>현재 읽는 책</label>
-                <select id="library-book-select" class="select-input">
-                  <option value="">현재 읽는 책을 선택하세요...</option>
-                </select>
-              </div>
-              <div class="library-start-page-field form-group">
-                <label>이번 독서 시작 페이지</label>
-                <input type="number" id="library-start-page" class="num-input" min="1" placeholder="예: 46">
-              </div>
-            </div>
+    <div class="library-header" style="text-align: center; margin-bottom: 35px; border-bottom: 1px solid #3d3632; padding-bottom: 20px;">
+      <h2 style="font-size: 2.5rem; color: #d4ccc4; letter-spacing: 5px; margin: 0; font-weight: 600; font-family: 'Cinzel', 'Cormorant Garamond', serif;">THE OLD ATHENAEUM</h2>
+    </div>
 
-            <div class="library-no-current-note" id="library-no-current-note">현재 읽는 책이 없다면 아래에서 새 책을 검색해 바로 독서를 시작할 수 있습니다.</div>
-            <div class="search-box reading-search-box">
-              <input type="text" id="library-book-search-input" placeholder="새로 읽을 책 검색...">
-              <button type="button" id="btn-library-book-search" class="archival-btn">검색</button>
-            </div>
-            <div id="library-book-search-results" class="search-results hidden"></div>
-
-            <button type="button" id="btn-start-reading" class="library-start-btn">
-              <span>☾</span> 독서 시작
-            </button>
-          </div>
-
-          <div id="library-timer-panel" class="library-timer-panel hidden">
-            <div class="timer-book-label">NOW READING</div>
-            <h3 id="library-timer-book-title">—</h3>
-            <div class="library-timer" id="library-timer">00:00:00</div>
-            <div class="library-timer-page-note" id="library-timer-page-note">시작 페이지 —</div>
-            <button type="button" id="btn-stop-reading" class="library-stop-btn">독서 중단 · 현재 페이지 기록</button>
-          </div>
-
-          <div class="library-stat-grid">
-            <div class="library-stat"><span>총 독서 시간</span><strong id="stat-total-reading-time">0분</strong></div>
-            <div class="library-stat"><span>오늘 독서 시간</span><strong id="stat-today-reading-time">0분</strong></div>
-            <div class="library-stat"><span>해당 도서 독서 시간</span><strong id="stat-book-reading-time">0분</strong></div>
-          </div>
-        </div>
-
-        <div class="library-room-footer">✦ Please keep your voice low. Let the books speak. ✦</div>
-        <button class="archival-btn secondary" onclick="showView('map')">지도으로 돌아가기</button>
-        <span class="ornament bottom-left">❦</span>
-        <span class="ornament bottom-right">❦</span>
+    <!-- 책 입력 및 타이머 조작 패널 -->
+    <div class="library-control-panel" style="background: rgba(20, 18, 17, 0.65); border: 1px solid #4d443f; padding: 25px; border-radius: 4px; margin-bottom: 35px; display: flex; flex-direction: column; gap: 20px; backdrop-filter: blur(4px);">
+      <div class="library-input-box">
+        <input type="text" id="libCurrentBookInput" placeholder="오늘 읽을 책의 제목을 기록하세요..." autocomplete="off" style="width: 100%; background: rgba(14, 12, 11, 0.85); border: 1px solid #3d3632; color: #d4ccc4; padding: 14px 18px; font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; box-sizing: border-box; outline: none;">
       </div>
-    </section>
 
-    <!-- 화면 3: 완독 책 기록 폼 섹션 -->
-    <section id="view-form" class="parchment-card hidden">
-      <div class="card-border-inner">
-        <span class="ornament top-left">❦</span>
-        <span class="ornament top-right">❦</span>
-        
-        <div class="form-header">
-          <h2 class="form-title" data-i18n="formTitle">완독 서적 기록</h2>
-          <button type="button" class="close-btn" onclick="showView('hero')">✕</button>
+      <div class="library-timer-box" style="display: flex; justify-content: space-between; align-items: center; background: rgba(14, 12, 11, 0.85); padding: 15px 20px; border: 1px solid #3d3632;">
+        <div id="libTimerDisplay" class="timer-display" style="font-size: 2rem; font-family: 'Cinzel', monospace; color: #b8b0a8; letter-spacing: 2px;">00:00:00</div>
+        <div class="library-btn-group" style="display: flex; gap: 10px;">
+          <button id="libStartBtn" class="btn-vintage" style="background: #2d2724; border: 1px solid #4d443f; color: #d4ccc4; padding: 10px 22px; font-family: 'Cormorant Garamond', serif; font-size: 1rem; cursor: pointer; letter-spacing: 1px; transition: all 0.2s;">독서 시작</button>
+          <button id="libStopBtn" class="btn-vintage" style="background: #141211; border: 1px solid #3d3632; color: #594e47; padding: 10px 22px; font-family: 'Cormorant Garamond', serif; font-size: 1rem; cursor: pointer; letter-spacing: 1px; opacity: 0.5;" disabled>기록 저장 및 퇴장</button>
         </div>
-        <div class="separator">───── 🕯️ ─────</div>
-        
-        <!-- 도서 검색 영역 -->
-        <div class="search-section">
-          <div class="search-box">
-            <input type="text" id="book-search-input" placeholder="도서명 또는 저자를 입력하세요..." data-i18n-placeholder="searchPlaceholder">
-            <button type="button" id="btn-search" class="archival-btn" data-i18n="btnSearch">검색</button>
-          </div>
-          <div id="search-results" class="search-results hidden"></div>
-        </div>
-
-        <!-- 책 상세 기록 폼 -->
-        <form id="book-form" class="book-form">
-          <div class="form-row">
-            <div class="cover-preview-box" id="cover-upload-trigger" title="클릭하여 이미지 선택">
-              <img id="preview-cover" src="" alt="표지 이미지" class="hidden">
-              <div id="no-cover" class="no-cover-text" data-i18n="noCover">
-                <span>이미지 첨부</span>
-                <span>(클릭)</span>
-              </div>
-              <input type="file" id="cover-file-input" accept="image/*" class="hidden">
-            </div>
-            
-            <div class="form-inputs">
-              <input type="text" id="book-title" placeholder="책 제목" required data-i18n-placeholder="inputTitle">
-              <input type="text" id="book-author" placeholder="저자" required data-i18n-placeholder="inputAuthor">
-              <input type="text" id="book-publisher" placeholder="출판사" data-i18n-placeholder="inputPublisher">
-            </div>
-          </div>
-
-          <div class="form-row options-row">
-            <!-- 별 클릭 평점 -->
-            <div class="form-group">
-              <label data-i18n="labelRating">평점</label>
-              <div class="star-rating-wrapper">
-                <div class="star-rating" id="star-rating">
-                  <i class="fa-solid fa-star star" data-value="1"></i>
-                  <i class="fa-solid fa-star star" data-value="2"></i>
-                  <i class="fa-solid fa-star star" data-value="3"></i>
-                  <i class="fa-solid fa-star star" data-value="4"></i>
-                  <i class="fa-solid fa-star star" data-value="5"></i>
-                </div>
-                <span id="rating-text" class="rating-value-text">5.0</span>
-                <input type="hidden" id="book-rating" value="5.0">
-              </div>
-            </div>
-
-            <!-- 독서 기간 영역 -->
-            <div class="form-group">
-              <label data-i18n="labelReadPeriod">독서 기간</label>
-              <div class="date-range-group">
-                <input type="date" id="book-start-date" class="date-input" title="시작일">
-                <span class="date-separator">~</span>
-                <input type="date" id="book-end-date" class="date-input" title="종료일">
-              </div>
-            </div>
-
-            <!-- 공개 여부 -->
-            <div class="form-group">
-              <label data-i18n="labelVisibility">공개 설정</label>
-              <select id="book-visibility" class="select-input">
-                <option value="public" data-i18n="optionPublic">공개 서재</option>
-                <option value="private" data-i18n="optionPrivate">비밀 서재</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <input type="url" id="book-music" placeholder="배경 음악 URL (YouTube / Spotify)" data-i18n-placeholder="inputMusic">
-          </div>
-
-          <div class="form-group">
-            <textarea id="book-review" rows="2" placeholder="이 책이 당신에게 남긴 문장과 사유를 기록하세요..." data-i18n-placeholder="inputReview"></textarea>
-          </div>
-
-          <button type="submit" class="archival-btn submit-btn" data-i18n="btnSave">서재에 저장하기</button>
-        </form>
-
-        <span class="ornament bottom-left">❦</span>
-        <span class="ornament bottom-right">❦</span>
       </div>
-    </section>
+    </div>
+
+    <!-- 서버를 통해 실시간으로 공유되는 현황판 -->
+    <div class="library-sharing-section">
+      <h3 style="font-size: 1.3rem; color: #b8b0a8; margin-bottom: 15px; border-left: 3px solid #594e47; padding-left: 10px; font-weight: 600; letter-spacing: 1px; font-family: 'Cinzel', 'Cormorant Garamond', serif;">현재 서재에 머무는 사람들</h3>
+      <div id="libActiveUsersGrid" class="library-user-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px;">
+        <!-- 파이어베이스 데이터가 여기에 실시간으로 렌더링됩니다 -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 도서관 화면이 보일 때만 화면 전체 배경을 켜는 스크립트 -->
+  <script>
+  (function () {
+    var sec = document.getElementById('view-library');
+    var bg = document.createElement('div');
+    bg.style.cssText =
+      "position:fixed;inset:0;z-index:-1;display:none;pointer-events:none;" +
+      "background:linear-gradient(rgba(20,18,17,0.35),rgba(12,11,10,0.5))," +
+      "url('https://images.unsplash.com/photo-1631028202299-b2dff578722b?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D') center 35%/cover no-repeat;" +
+      "transform:scale(1.3);";
+    document.body.appendChild(bg);
+
+    function sync() {
+      var visible = sec.getClientRects().length > 0;
+      var want = visible ? 'block' : 'none';
+      if (bg.style.display !== want) bg.style.display = want;
+    }
+    new MutationObserver(sync).observe(document.body, {
+      attributes: true, subtree: true,
+      attributeFilter: ['class', 'style', 'hidden']
+    });
+    sync();
+  })();
+  </script>
+
+</section>
+
+
 
     <!-- 화면 4: 서재 탐색 영역 (책장 요소 추가됨) -->
     <section id="view-explore" class="parchment-card hidden">
@@ -829,6 +630,286 @@
   
 <script src="./js/i18n.js"></script>
 <script type="module" src="./js/app.js"></script>
+<!-- HOME 공간 -->
+<section id="view-home" class="room-scene hidden">
+  <div class="room-content">
+    <p class="room-eyebrow">YOUR QUIET SANCTUARY</p>
+    <h1>나만의 작은 서재</h1>
+    <p class="room-description">
+      잠시 쉬어 가도 괜찮아요.<br>
+      오늘의 당신에게 필요한 만큼만 집중해 봐요.
+    </p>
 
+    <div class="room-illustration home-illustration">
+      <div class="room-window">
+        <span>☾</span>
+      </div>
+      <div class="room-books">▤ ▥ ▤ ▥</div>
+      <div class="room-desk"></div>
+      <div class="room-lamp">♧</div>
+      <div class="room-character">☕</div>
+    </div>
+
+    <div class="room-focus">
+      <p class="room-eyebrow">FOCUS TIME</p>
+      <div id="home-timer" class="room-timer">25:00</div>
+
+      <div class="room-time-options">
+        <button type="button" data-focus-minutes="15">15분</button>
+        <button type="button" data-focus-minutes="25" class="selected">25분</button>
+        <button type="button" data-focus-minutes="45">45분</button>
+        <button type="button" data-focus-minutes="60">60분</button>
+      </div>
+
+      <div class="room-actions">
+        <button type="button" id="home-timer-start">집중 시작</button>
+        <button type="button" id="home-timer-reset">다시 시작</button>
+      </div>
+      <p id="home-timer-message" class="room-message">
+        천천히 시작해도 괜찮아요.
+      </p>
+    </div>
+
+    <button type="button" class="room-back-button"
+      onclick="showView('hero')">메인으로 돌아가기</button>
+  </div>
+</section>
+
+<!-- CAFÉ 공간 -->
+<section id="view-cafe" class="room-scene cafe-academia hidden">
+  <div class="cafe-hero">
+    <p class="cafe-eyebrow">A LITTLE BREAK</p>
+    <h1>오래된 책방 카페</h1>
+    <p class="cafe-subtitle">책 한 권과 따뜻한 음료가 있는 오후</p>
+  </div>
+
+  <div class="cafe-menu-paper">
+    <header class="cafe-menu-header">
+      <p>THE OLD BOOKSHOP</p>
+      <h2>Books & Coffee</h2>
+      <span>COFFEE · TEA · SWEET MOMENTS</span>
+    </header>
+
+    <div class="cafe-menu-list">
+      <button class="cafe-menu-item" type="button" data-drink="americano">
+        <span class="cafe-menu-info">
+          <strong>아이스 아메리카노</strong>
+          <small>깔끔하고 깊은 원두의 풍미</small>
+        </span>
+        <span class="cafe-menu-price">4,000원</span>
+      </button>
+
+      <button class="cafe-menu-item" type="button" data-drink="mocha">
+        <span class="cafe-menu-info">
+          <strong>카페모카</strong>
+          <small>에스프레소와 달콤한 초콜릿</small>
+        </span>
+        <span class="cafe-menu-price">5,000원</span>
+      </button>
+
+      <button class="cafe-menu-item" type="button" data-drink="greentea">
+        <span class="cafe-menu-info">
+          <strong>그린티 라떼</strong>
+          <small>은은한 녹차 향과 부드러운 우유</small>
+        </span>
+        <span class="cafe-menu-price">5,000원</span>
+      </button>
+
+      <button class="cafe-menu-item" type="button" data-drink="cocoa">
+        <span class="cafe-menu-info">
+          <strong>핫초코</strong>
+          <small>포근하고 진한 초콜릿의 달콤함</small>
+        </span>
+        <span class="cafe-menu-price">4,500원</span>
+      </button>
+
+      <button class="cafe-menu-item" type="button" data-drink="strawberry">
+        <span class="cafe-menu-info">
+          <strong>딸기 라떼</strong>
+          <small>달콤한 딸기와 신선한 우유</small>
+        </span>
+        <span class="cafe-menu-price">5,000원</span>
+      </button>
+    </div>
+
+     <div class="cafe-entry">
+
+      <p id="cafe-drink-message" class="cafe-menu-footer">
+
+        오늘은 어떤 음료와 함께할까요?
+
+      </p>
+
+
+      <button id="cafe-enter-room" class="cafe-primary-button" type="button" disabled>
+
+        음료를 먼저 골라주세요
+
+      </button>
+
+
+      <p class="cafe-entry-help">
+
+        로그인 후 다른 사람들과 같은 카페에서 독서할 수 있어요.
+
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <div id="cafe-shared-room" class="cafe-shared-room hidden">
+
+    <div class="cafe-shared-header">
+
+      <p class="cafe-eyebrow">READING TOGETHER</p>
+
+      <h2>함께 읽는 카페</h2>
+
+      <p>각자의 책을 펼치고, 같은 공간에서 함께 읽어요.</p>
+
+    </div>
+
+
+    <div class="cafe-my-seat">
+
+      <p id="cafe-my-drink"></p>
+
+      <h3>나의 독서 시간</h3>
+
+      <div id="cafe-shared-clock" class="cafe-shared-clock">00:00:00</div>
+
+      <p id="cafe-shared-status">준비되면 독서를 시작해 주세요.</p>
+
+      
+
+      <div class="cafe-room-actions">
+
+        <button id="cafe-shared-toggle" class="cafe-primary-button" type="button">독서 시작</button>
+
+        <button id="cafe-shared-leave" class="cafe-secondary-button" type="button">독서방 나가기</button>
+
+      </div>
+
+    </div>
+
+
+    <section class="cafe-members-section">
+
+      <div class="cafe-members-heading">
+
+        <h3>함께 있는 사람들</h3>
+
+        <span id="cafe-member-count">연결 중</span>
+
+      </div>
+
+      <p id="cafe-room-notice"></p>
+
+      <div id="cafe-member-list" class="cafe-member-grid"></div>
+
+    </section>
+
+  </div>
+
+
+  <button type="button" class="room-back-button"
+
+    onclick="showView('hero')">메인으로 돌아가기</button>
+
+</section>
+    <!-- 화면 3: 완독 책 기록 폼 섹션 (유실되었던 부분) -->
+    <section id="view-form" class="parchment-card hidden">
+      <div class="card-border-inner">
+        <span class="ornament top-left">❦</span>
+        <span class="ornament top-right">❦</span>
+        
+        <div class="form-header">
+          <h2 class="form-title" data-i18n="formTitle">완독 서적 기록</h2>
+          <button type="button" class="close-btn" onclick="showView('hero')">✕</button>
+        </div>
+        <div class="separator">───── 🕯️ ─────</div>
+        
+        <!-- 도서 검색 영역 -->
+        <div class="search-section">
+          <div class="search-box">
+            <input type="text" id="book-search-input" placeholder="도서명 또는 저자를 입력하세요..." data-i18n-placeholder="searchPlaceholder">
+            <button type="button" id="btn-search" class="archival-btn" data-i18n="btnSearch">검색</button>
+          </div>
+          <div id="search-results" class="search-results hidden"></div>
+        </div>
+
+        <!-- 책 상세 기록 폼 -->
+        <form id="book-form" class="book-form">
+          <div class="form-row">
+            <div class="cover-preview-box" id="cover-upload-trigger" title="클릭하여 이미지 선택">
+              <img id="preview-cover" src="" alt="표지 이미지" class="hidden">
+              <div id="no-cover" class="no-cover-text" data-i18n="noCover">
+                <span>이미지 첨부</span>
+                <span>(클릭)</span>
+              </div>
+              <input type="file" id="cover-file-input" accept="image/*" class="hidden">
+            </div>
+            
+            <div class="form-inputs">
+              <input type="text" id="book-title" placeholder="책 제목" required data-i18n-placeholder="inputTitle">
+              <input type="text" id="book-author" placeholder="저자" required data-i18n-placeholder="inputAuthor">
+              <input type="text" id="book-publisher" placeholder="출판사" data-i18n-placeholder="inputPublisher">
+            </div>
+          </div>
+
+          <div class="form-row options-row">
+            <!-- 별 클릭 평점 -->
+            <div class="form-group">
+              <label data-i18n="labelRating">평점</label>
+              <div class="star-rating-wrapper">
+                <div class="star-rating" id="star-rating">
+                  <i class="fa-solid fa-star star" data-value="1"></i>
+                  <i class="fa-solid fa-star star" data-value="2"></i>
+                  <i class="fa-solid fa-star star" data-value="3"></i>
+                  <i class="fa-solid fa-star star" data-value="4"></i>
+                  <i class="fa-solid fa-star star" data-value="5"></i>
+                </div>
+                <span id="rating-text" class="rating-value-text">5.0</span>
+                <input type="hidden" id="book-rating" value="5.0">
+              </div>
+            </div>
+
+            <!-- 독서 기간 영역 -->
+            <div class="form-group">
+              <label data-i18n="labelReadPeriod">독서 기간</label>
+              <div class="date-range-group">
+                <input type="date" id="book-start-date" class="date-input" title="시작일">
+                <span class="date-separator">~</span>
+                <input type="date" id="book-end-date" class="date-input" title="종료일">
+              </div>
+            </div>
+
+            <!-- 공개 여부 -->
+            <div class="form-group">
+              <label data-i18n="labelVisibility">공개 설정</label>
+              <select id="book-visibility" class="select-input">
+                <option value="public" data-i18n="optionPublic">공개 서재</option>
+                <option value="private" data-i18n="optionPrivate">비밀 서재</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <input type="url" id="book-music" placeholder="배경 음악 URL (YouTube / Spotify)" data-i18n-placeholder="inputMusic">
+          </div>
+
+          <div class="form-group">
+            <textarea id="book-review" rows="2" placeholder="이 책이 당신에게 남긴 문장과 사유를 기록하세요..." data-i18n-placeholder="inputReview"></textarea>
+          </div>
+
+          <button type="submit" class="archival-btn submit-btn" data-i18n="btnSave">서재에 저장하기</button>
+        </form>
+
+        <span class="ornament bottom-left">❦</span>
+        <span class="ornament bottom-right">❦</span>
+      </div>
+    </section>
 </body>
 </html>
